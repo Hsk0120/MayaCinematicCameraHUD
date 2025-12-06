@@ -1,0 +1,2 @@
+# MayaCinematicCameraHUD
+Mayaでのシネマティック演出向けカメラHUD機能を提供するプラグイン。
