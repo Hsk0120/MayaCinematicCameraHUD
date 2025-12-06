@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
+# group CMake predefined targets
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMakeTargets")
+
 # include the project setting file
 include($ENV{DEVKIT_LOCATION}/cmake/pluginEntry.cmake)
 
@@ -21,6 +25,9 @@ set(LIBRARIES
      OpenMayaRender
      Foundation
 )
+
+# set 
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMakeTargets")
 
 # Build plugin
 build_plugin()
