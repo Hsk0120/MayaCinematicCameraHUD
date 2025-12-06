@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 
 # include the project setting file
 include($ENV{DEVKIT_LOCATION}/cmake/pluginEntry.cmake)
