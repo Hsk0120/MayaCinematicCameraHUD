@@ -10,6 +10,6 @@ SET "DEVKIT_LOCATION=C:/Program Files/Autodesk/Maya%MAYA_VERSION%"
 SET "CMAKE_EXE=C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
 
 ECHO Running CMake...
-"%CMAKE_EXE%" "." -B build -G "Visual Studio 18"
+"%CMAKE_EXE%" "." -B "build_%MAYA_VERSION%" -G "Visual Studio 18"
 
 PAUSE

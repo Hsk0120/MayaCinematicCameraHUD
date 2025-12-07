@@ -4,14 +4,8 @@ cmake_minimum_required(VERSION 3.5)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMakeTargets")
 
-# Maya version (default: 2026)
-set(MAYA_VERSION "2026" CACHE STRING "Maya version (2022 / 2024 / 2026)")
-
-# Devkit path
-set(DEVKIT_LOCATION "C:/Program Files/Autodesk/Maya${MAYA_VERSION}" CACHE PATH "Maya devkit path")
-
 # include the project setting file
-include("${DEVKIT_LOCATION}/cmake/pluginEntry.cmake")
+include("$ENV{DEVKIT_LOCATION}/cmake/pluginEntry.cmake")
 
 # specify project name
 set(PROJECT_NAME MayaCinematicCameraHUD)
