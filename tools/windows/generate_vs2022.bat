@@ -3,6 +3,10 @@
 
 CD /d "%~dp0\..\.."
 
+SET "MAYA_VERSION=2024"
+
+SET "DEVKIT_LOCATION=C:/Program Files/Autodesk/Maya%MAYA_VERSION%"
+
 SET "CMAKE_EXE=C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
 
 ECHO Running CMake...

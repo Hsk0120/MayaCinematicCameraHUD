@@ -8,10 +8,10 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMakeTargets")
 set(MAYA_VERSION "2026" CACHE STRING "Maya version (2022 / 2024 / 2026)")
 
 # Devkit path
-set(DEVKIT_LOCATION "C:/Program Files/Autodesk/Maya${MAYA_VERSION}/devkit" CACHE PATH "Maya devkit path")
+set(DEVKIT_LOCATION "C:/Program Files/Autodesk/Maya${MAYA_VERSION}" CACHE PATH "Maya devkit path")
 
 # include the project setting file
-include($ENV{DEVKIT_LOCATION}/cmake/pluginEntry.cmake)
+include("${DEVKIT_LOCATION}/cmake/pluginEntry.cmake")
 
 # specify project name
 set(PROJECT_NAME MayaCinematicCameraHUD)
