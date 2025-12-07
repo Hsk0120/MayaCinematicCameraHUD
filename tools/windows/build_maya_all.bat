@@ -19,12 +19,11 @@ for %%V in (2022 2024 2026) do (
     SET "TOOLSET=v145"
   )
 
-  echo ==== Building for Maya %%V with toolset "!TOOLSET!" ====
-  echo "C:\Program Files\Autodesk\Maya%%V"
+  ECHO ==== Building for Maya %%V with toolset "!TOOLSET!" ====
 
   SET "DEVKIT_LOCATION=C:/Program Files/Autodesk/Maya%%V"
 
-  "%CMAKE_EXE%" -S . -B build_%%V -G "%CMAKE_GENERATOR%" -T "!TOOLSET!" -DMAYA_VERSION=%%V -DEVKIT_LOCATION="C:\Program Files\Autodesk\Maya%%V"
+  "%CMAKE_EXE%" -S . -B build_%%V -G "%CMAKE_GENERATOR%" -T "!TOOLSET!" -DMAYA_VERSION=%%V
   "%CMAKE_EXE%" --build build_%%V --config Release
   
 )
