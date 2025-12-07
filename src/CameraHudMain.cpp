@@ -37,34 +37,35 @@ CameraHudManagerData::CameraHudManagerData()
 
 };
 
-CameraHudManagerDrawOverride::CameraHudManagerDrawOverride(const MObject& obj)
-    : MPxDrawOverride(obj, NULL)
+CameraHudDrawOverride::CameraHudDrawOverride(
+    const MObject& ownerCameraHudNode)
+    : MPxDrawOverride(ownerCameraHudNode, nullptr)
 {
+}
 
-};
-
-CameraHudManagerDrawOverride::~CameraHudManagerDrawOverride()
+MHWRender::MPxDrawOverride* CameraHudDrawOverride::createCameraHud(
+    const MObject& ownerCameraHudNode)
 {
+    return new CameraHudDrawOverride(ownerCameraHudNode);
+}
 
-};
-
-DrawAPI CameraHudManagerDrawOverride::supportedDrawAPIs() const
+MHWRender::DrawAPI CameraHudDrawOverride::supportedDrawAPIs() const
 {
-    return (kOpenGL | kDirectX11 | kOpenGLCoreProfile);
-};
+    return (MHWRender::kOpenGL | MHWRender::kDirectX11 | MHWRender::kOpenGLCoreProfile);
+}
 
-bool CameraHudManagerDrawOverride::isBounded(const MDagPath& objPath, const MDagPath& cameraPath) const
+bool CameraHudDrawOverride::isBounded(
+    const MDagPath&, 
+    const MDagPath&) const
 {
     return false;
-};
+}
 
-MBoundingBox CameraHudManagerDrawOverride::boundingBox(const MDagPath& objPath, const MDagPath& cameraPath) const
-{
-    return MBoundingBox();
-};
-
-//  データを取得してキャッシュ
-MUserData* CameraHudManagerDrawOverride::prepareForDraw(const MDagPath& objPath, const MDagPath& cameraPath, const MHWRender::MFrameContext& frameContext, MUserData* oldData)
+MUserData* CameraHudDrawOverride::prepareForDraw(
+    const MDagPath& objPath, 
+    const MDagPath& cameraPath, 
+    const MHWRender::MFrameContext& frameContext, 
+    MUserData* oldData)
 {
     CameraHudManagerData* data = dynamic_cast<CameraHudManagerData*>(oldData);
     if (!data) {
@@ -164,8 +165,16 @@ MUserData* CameraHudManagerDrawOverride::prepareForDraw(const MDagPath& objPath,
     return data;
 };
 
-// prepareForDraw()の直後に実行　MUIDrawManagerへのアクセスを提供
-void CameraHudManagerDrawOverride::addUIDrawables(const MDagPath& objPath, MHWRender::MUIDrawManager& drawManager, const MHWRender::MFrameContext& frameContext, const MUserData* data)
+bool CameraHudDrawOverride::hasUIDrawables() const 
+{ 
+    return true; 
+}
+
+void CameraHudDrawOverride::addUIDrawables(
+    const MDagPath&, 
+    MHWRender::MUIDrawManager& drawManager, 
+    const MHWRender::MFrameContext&, 
+    const MUserData* data)
 {
     const CameraHudManagerData* thisdata = dynamic_cast<const CameraHudManagerData*>(data);
     if (!thisdata) {
@@ -226,7 +235,7 @@ void CameraHudManagerDrawOverride::addUIDrawables(const MDagPath& objPath, MHWRe
 
     drawManager.endDrawable();
 
-};
+}
 
 // ノードのアトリビュート登録処理
 MStatus CameraHudManager::initialize()
@@ -274,7 +283,7 @@ MStatus initializePlugin(MObject obj)
     status = MHWRender::MDrawRegistry::registerDrawOverrideCreator(
         CameraHudManager::drawDbClassification,
         CameraHudManager::drawRegistrantId,
-        CameraHudManagerDrawOverride::Creator);
+        CameraHudDrawOverride::createCameraHud);
     if (!status) {
         status.perror("registerDrawOverrideCreator");
         return status;

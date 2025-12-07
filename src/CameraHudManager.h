@@ -1,3 +1,4 @@
+#pragma once
 #include <maya/MPxLocatorNode.h>
 #include <maya/MFnPlugin.h>
 #include <maya/MFnEnumAttribute.h>
@@ -15,8 +16,6 @@
 #include <algorithm>
 #include "CameraHudUtility.h"
 
-using namespace MHWRender;
-#pragma once
 
 // ノードを作るお作法
 class CameraHudManager : public MPxLocatorNode
@@ -150,33 +149,32 @@ public:
 
 };
 
-// UI描画用クラス
-class CameraHudManagerDrawOverride : public MPxDrawOverride
- {
+// カメラ用 HUD を描画するためのクラス。
+class CameraHudDrawOverride : public MHWRender::MPxDrawOverride
+{
 public:
-    static MPxDrawOverride* Creator(const MObject& obj)
-    {
-        return new CameraHudManagerDrawOverride(obj);
-    }
-    ~CameraHudManagerDrawOverride() override;
-    DrawAPI supportedDrawAPIs() const override;
+	// CameraHudDrawOverride クラスのインスタンスを生成
+    static MHWRender::MPxDrawOverride* createCameraHud(const MObject& ownerCameraHudNode);
 
+    // 対応する描画 API（OpenGL / DirectX 等）を返す
+    MHWRender::DrawAPI supportedDrawAPIs() const override;
+
+    // バウンディングボックスを持たない（HUD は常に描画する）
     bool isBounded(
         const MDagPath& objPath,
         const MDagPath& cameraPath) const override;
 
-    MBoundingBox boundingBox(
-        const MDagPath& objPath,
-        const MDagPath& cameraPath) const override;
-
+    // 計算結果や状態を MUserData にキャッシュ
     MUserData* prepareForDraw(
         const MDagPath& objPath,
         const MDagPath& cameraPath,
         const MFrameContext& frameContext,
         MUserData* oldData) override;
 
-    bool hasUIDrawables() const override { return true; }
+    // このクラスが UI 描画（2D テキストなど）を行う True。
+    bool hasUIDrawables() const override;
 
+    // 実際の UI 要素（HUD テキストやラインなど）を追加するメソッド。MUIDrawManagerを使用して描画指示を行う
     void addUIDrawables(
         const MDagPath& objPath,
         MHWRender::MUIDrawManager& drawManager,
@@ -184,5 +182,6 @@ public:
         const MUserData* data) override;
 
 private:
-    CameraHudManagerDrawOverride(const MObject& obj);
- };
+    // 外部から newさせないためにコンストラクタは private化
+    CameraHudDrawOverride(const MObject& ownerCameraHudNode);
+};
