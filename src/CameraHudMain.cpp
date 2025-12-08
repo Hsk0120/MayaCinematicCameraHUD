@@ -6,36 +6,17 @@
 #include "CameraHudManager.h"
 #include "CameraHudUtility.h"
 
-//MObject CameraHudManager::aText;
-MObject CameraHudManager::aTextBoxTransparency;
-MObject CameraHudManager::aTextFontSize;
-
-MTypeId CameraHudManager::id(0x0013c801);
-MString CameraHudManager::drawDbClassification("drawdb/geometry/CameraHud");
-MString CameraHudManager::drawRegistrantId("CameraHudPlugin");
-
-// お作法
-CameraHudManager::CameraHudManager()
+void* CameraHudNode::creator()
 {
+    return new CameraHudNode();
+}
 
-};
+MObject CameraHudNode::aTextBoxTransparency;
+MObject CameraHudNode::aTextFontSize;
 
-CameraHudManager::~CameraHudManager()
-{
-
-};
-
-void* CameraHudManager::creator()
-{
-    return new CameraHudManager();
-};
-
-MStringArray CameraHudManagerData::fFontList;
-
-CameraHudManagerData::CameraHudManagerData()
-{
-
-};
+MTypeId CameraHudNode::id(0x0013c801);
+MString CameraHudNode::drawDbClassification("drawdb/geometry/CameraHud");
+MString CameraHudNode::drawRegistrantId("CameraHudPlugin");
 
 CameraHudDrawOverride::CameraHudDrawOverride(
     const MObject& ownerCameraHudNode)
@@ -88,7 +69,7 @@ MUserData* CameraHudDrawOverride::prepareForDraw(
         data->fEndFrame = get_frame("End : ", get_end_frame());
 
         //アトリビュートテキストをセット
-        //data->fText = MPlug(CameraHudNode, CameraHudManager::aText).asString();
+        //data->fText = MPlug(CameraHudNode, CameraHudNode::aText).asString();
 
         // カメラネームを取得してセット
         data->fCamera = get_camera_name(MFnDagNode(frameContext.getCurrentCameraPath(), &status).name().asChar());
@@ -106,11 +87,11 @@ MUserData* CameraHudDrawOverride::prepareForDraw(
         data->fCut = get_cut_num(frameContext.getCurrentCameraPath());
 
         // テキストサイズ取得
-        MPlug plugTextFontSize(CameraHudNode, CameraHudManager::aTextFontSize);
+        MPlug plugTextFontSize(CameraHudNode, CameraHudNode::aTextFontSize);
         data->fTextFontSize = plugTextFontSize.asFloat();
 
         // テキストボックスの透明度取得
-        MPlug plugTextBoxTransparency(CameraHudNode, CameraHudManager::aTextBoxTransparency);
+        MPlug plugTextBoxTransparency(CameraHudNode, CameraHudNode::aTextBoxTransparency);
         data->fTextBoxColor.a = 1.0f - plugTextBoxTransparency.asFloat();
 
 
@@ -238,7 +219,7 @@ void CameraHudDrawOverride::addUIDrawables(
 }
 
 // ノードのアトリビュート登録処理
-MStatus CameraHudManager::initialize()
+MStatus CameraHudNode::initialize()
 {
     MStatus status;
     MFnNumericAttribute nAttr;
@@ -270,19 +251,19 @@ MStatus initializePlugin(MObject obj)
 
     status = plugin.registerNode(
         "CameraHud",
-        CameraHudManager::id,
-        &CameraHudManager::creator,
-        &CameraHudManager::initialize,
+        CameraHudNode::id,
+        &CameraHudNode::creator,
+        &CameraHudNode::initialize,
         MPxNode::kLocatorNode,
-        &CameraHudManager::drawDbClassification);
+        &CameraHudNode::drawDbClassification);
     if (!status) {
         status.perror("registerNode");
         return status;
     }
 
     status = MHWRender::MDrawRegistry::registerDrawOverrideCreator(
-        CameraHudManager::drawDbClassification,
-        CameraHudManager::drawRegistrantId,
+        CameraHudNode::drawDbClassification,
+        CameraHudNode::drawRegistrantId,
         CameraHudDrawOverride::createCameraHud);
     if (!status) {
         status.perror("registerDrawOverrideCreator");
@@ -299,14 +280,14 @@ MStatus uninitializePlugin(MObject obj)
     MFnPlugin plugin(obj);
 
     status = MDrawRegistry::deregisterGeometryOverrideCreator(
-        CameraHudManager::drawDbClassification,
-        CameraHudManager::drawRegistrantId);
+        CameraHudNode::drawDbClassification,
+        CameraHudNode::drawRegistrantId);
     if (!status) {
         status.perror("deregisterGeometryOverrideCreator");
         return status;
     }
 
-    status = plugin.deregisterNode(CameraHudManager::id);
+    status = plugin.deregisterNode(CameraHudNode::id);
     if (!status) {
         status.perror("deregisterNode");
         return status;

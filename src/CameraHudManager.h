@@ -16,21 +16,12 @@
 #include <algorithm>
 #include "CameraHudUtility.h"
 
-
-// ノードを作るお作法
-class CameraHudManager : public MPxLocatorNode
- {
+// CameraHudノード
+class CameraHudNode : public MPxLocatorNode
+{
 public:
-    CameraHudManager();
-    ~CameraHudManager() override;
-
     static void* creator(); //登録
     static MStatus initialize(); //設定
-
-    virtual bool excludeAsLocator() const
-    {
-        return false;
-    }
 
     static MObject aText;
     static MObject aTextBoxTransparency;
@@ -40,14 +31,12 @@ public:
     static MTypeId id;
     static MString drawDbClassification;
     static MString drawRegistrantId;
- };
+};
 
-// uiの情報をまとめているデータ
+// CemeraHudのデータクラス
 class CameraHudManagerData : public MUserData
  {
 public:
-    CameraHudManagerData();
-
     // テキスト情報の初期値
     MColor                      fColor{ 1.0f, 1.0f, 1.0f, 1.0f };
     float                       fLineWidth{ 2.f };
@@ -55,7 +44,6 @@ public:
     MUIDrawManager::LineStyle   fLineStyle{ MUIDrawManager::kSolid };
     float                       fTextFontSize{ 1.0 };
     unsigned int                fFontFaceIndex{ 0 };
-    static MStringArray         fFontList;
     int                         fTextIncline{ MUIDrawManager::kInclineNormal };
     int                         fTextWeight{ MUIDrawManager::kWeightNormal };
     int                         fTextBoxWidth{ 0 };
@@ -66,14 +54,6 @@ public:
     MPoint  fOffsetPosition{ 20,20,0 };
     MPoint  fMarginPosition{ 0,50,0 };
     MPoint  fMaskOffsetPosition{ 0,0,0 };
-
-
-    // アトリビュートテキスト
-    //MString fText{ "uiDrawManager-Text" };
-    //int     fNum = 0;
-    //MPoint  fPosition{ 0, 0, 0 };
-    //MUIDrawManager::TextAlignment fTextAlignment{ MUIDrawManager::kCenter };
-
 
     // スタートフレーム
     MString fStartFrame{ "0f" };
@@ -92,7 +72,6 @@ public:
     int     fFrameNum = 0;
     MPoint  fFramePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fFrameTextAlignment{ MUIDrawManager::kLeft };
-
 
     // カメラネーム
     MString fCamera{ "uiDrawManager-Text" };
@@ -118,14 +97,11 @@ public:
     MPoint  fCameraCachePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fCameraCacheTextAlignment{ MUIDrawManager::kLeft };
 
-
-
     // タイムコード
     MString fTimeCode{ "0:0:0:0" };
     int     fTimeCodeNum = 0;
     MPoint  fTimeCodePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fTimeCodeTextAlignment{ MUIDrawManager::kRight };
-
 
     //日付
     MString fCurrentDate{ get_current_date().data() };
@@ -139,14 +115,11 @@ public:
     MPoint  fUserNamePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fUserNameTextAlignment{ MUIDrawManager::kRight };
 
-
-
     //シーンネーム
     MString fSceneName = get_scene_name();
     int     fSceneNameNum = 0;
     MPoint  fSceneNamePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fSceneNameTextAlignment{ MUIDrawManager::kCenter };
-
 };
 
 // カメラ用 HUD を描画するためのクラス。
