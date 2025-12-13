@@ -21,22 +21,22 @@
 #include <iostream>
 #include "CameraHudUtility.h"
 
-std::string get_current_date()
+std::string getCurrentDate()
 {
-    // 現在の時刻を取得
+    // 現在時刻を取得
     auto now = std::chrono::system_clock::now();
     std::time_t time_now = std::chrono::system_clock::to_time_t(now);
 
-    // tm構造体に変換
+    // tm 構体に変換
     std::tm* time_info = std::localtime(&time_now);
 
-    // 必要な形式で出力
+    // フォーマット
     std::stringstream ss;
     ss << std::put_time(time_info, "%Y/%m/%d");
     return ss.str();
 }
 
-void convert_unitToTime(
+void getFPSFromTimeUnit(
     const MTime::Unit& unit,
     double& framesPerSecond)
 {
@@ -71,7 +71,7 @@ void convert_unitToTime(
     }
 }
 
-void convert_secondsToTime(
+void secondsToHMSF(
     double seconds,
     int& hours,
     int& minutes,
@@ -80,9 +80,9 @@ void convert_secondsToTime(
     double framesPerSecond,
     MTime::Unit unit)
 {
-    convert_unitToTime(unit, framesPerSecond);
+    getFPSFromTimeUnit(unit, framesPerSecond);
 
-    // Compute the number of hours, minutes, and seconds
+    // 時間、分、秒を計算
     hours = static_cast<int>(std::floor(seconds / 3600.0));
     seconds -= hours * 3600.0;
     minutes = static_cast<int>(std::floor(seconds / 60.0));
@@ -91,7 +91,7 @@ void convert_secondsToTime(
     seconds -= secondsOut;
     frames = static_cast<int>(std::round(seconds * framesPerSecond));
 
-    // Adjust for overflow in the frames count
+    // フレーム数のオーバーフローを調整
     if (frames >= static_cast<int>(framesPerSecond)) {
         frames = 0;
         ++secondsOut;
@@ -108,7 +108,7 @@ void convert_secondsToTime(
     }
 }
 
-MString get_current_timecode()
+MString getCurrentTimecode()
 {
     MTime currentTime = MAnimControl::currentTime();
     double currentSeconds = currentTime.as(MTime::kSeconds);
@@ -117,7 +117,7 @@ MString get_current_timecode()
     double framesPerSecond = 60.0;
 
     MTime::Unit unit = currentTime.unit();
-    convert_secondsToTime(currentSeconds, hours, minutes, seconds, frames, framesPerSecond, unit);
+    secondsToHMSF(currentSeconds, hours, minutes, seconds, frames, framesPerSecond, unit);
 
     std::stringstream ss;
     ss << std::setfill('0') << std::setw(2) << hours << ":"
@@ -128,42 +128,42 @@ MString get_current_timecode()
     return MString(ss.str().c_str());
 }
 
-double get_current_frame()
+double getCurrentFrame()
 {
     MTime currentTime = MAnimControl::currentTime();
     double currentFrame = currentTime.as(currentTime.unit());
-    return currentFrame; // 取得に失敗した場合は0を返す
+    return currentFrame;
 }
 
-double get_start_frame()
+double getStartFrame()
 {
     MTime startTime = MAnimControl::minTime();
     double startFrame = startTime.as(startTime.unit());
     return startFrame;
 }
 
-double get_end_frame()
+double getEndFrame()
 {
     MTime endTime = MAnimControl::maxTime();
     double endFrame = endTime.as(endTime.unit());
     return endFrame;
 }
 
-void double_to_char(
+void formatDoubleToBuffer(
     double value, char* str,
     int precision)
 {
     sprintf(str, "%.*f", precision, value);
 }
 
-MString get_frame(const char* prefix, double frame)
+MString formatFrameString(const char* prefix, double frame)
 {
     std::stringstream ss;
     ss << prefix << static_cast<int>(std::round(frame)) << "f";
     return MString(ss.str().c_str());
 }
 
-std::string get_username()
+std::string getUserName()
 {
     char username[UNLEN + 1];
     DWORD size = sizeof(username);
@@ -172,11 +172,11 @@ std::string get_username()
         return std::string(username);
     }
     else {
-        return "";
+        return std::string();
     }
 }
 
-MString get_scene_name()
+MString getSceneName()
 {
     MString fileObj = MFileIO::currentFile();
     MStringArray nameArray;
@@ -184,7 +184,7 @@ MString get_scene_name()
     return nameArray[nameArray.length() - 1];
 }
 
-MString get_camera_name(const std::string& camName)
+MString getCameraNameFromString(const std::string& camName)
 {
     std::string local = camName;
     std::size_t pos = local.find("Shape");
@@ -194,38 +194,38 @@ MString get_camera_name(const std::string& camName)
     return MString(local.c_str());
 }
 
-MString GetNamespaceFromObject(
+MString getNamespaceFromDagPath(
     const MDagPath& dagPath)
 {
     MStatus status;
     MString namespaceObj = MNamespace::getNamespaceFromName(dagPath.partialPathName(), &status);
 
-    // 文字列の長さを取得
+    // 長さ取得
     int length = namespaceObj.length();
 
-    // 最後の3文字の範囲を指定して取得
+    // 末尾3文字を切り取って表示用にする
     MString cut_number = namespaceObj.substring(length - 3, length);
     cut_number = MString("Cut:") + cut_number;
     return cut_number;
 }
 
-MString get_cut_num(
+MString getCutNumber(
     const MDagPath& camDagPath)
 {
-    MString namespaceName = GetNamespaceFromObject(camDagPath);
+    MString namespaceName = getNamespaceFromDagPath(camDagPath);
     return namespaceName;
 }
 
-MString get_camera_focalLength(
+MString formatFocalLength(
     double focalLength)
 {
     char str[64];
-    double_to_char(focalLength, str, 2);
-    strcat(str, "mm"); // "mm"を結合する
+    formatDoubleToBuffer(focalLength, str, 2);
+    strcat(str, "mm");
     return MString(str);
 }
 
-MPoint get_viewport_leftBottom(
+MPoint computeViewportLeftBottom(
     int num,
     int width,
     int height,
@@ -240,7 +240,7 @@ MPoint get_viewport_leftBottom(
         0);
 }
 
-MPoint get_viewport_leftTop(
+MPoint computeViewportLeftTop(
     int num,
     int width,
     int height,
@@ -255,7 +255,7 @@ MPoint get_viewport_leftTop(
         0);
 }
 
-MPoint get_viewport_rightBottom(
+MPoint computeViewportRightBottom(
     int num,
     int width,
     int height,
@@ -270,7 +270,7 @@ MPoint get_viewport_rightBottom(
         0);
 }
 
-MPoint get_viewport_rightTop(
+MPoint computeViewportRightTop(
     int num,
     int width,
     int height,
@@ -285,7 +285,7 @@ MPoint get_viewport_rightTop(
         0);
 }
 
-MPoint get_viewport_centerBottom(
+MPoint computeViewportCenterBottom(
     int num,
     int width,
     int height,
@@ -300,7 +300,7 @@ MPoint get_viewport_centerBottom(
         0);
 }
 
-MPoint get_viewport_centerTop(
+MPoint computeViewportCenterTop(
     int num,
     int width,
     int height,
@@ -315,7 +315,7 @@ MPoint get_viewport_centerTop(
         0);
 }
 
-MPoint get_camera_resolution_fill(
+MPoint computeCameraResolutionFill(
     double overscan,
     int viewport_width,
     int viewport_height)
@@ -325,24 +325,22 @@ MPoint get_camera_resolution_fill(
     double mask_width = 0.0;
     double mask_height = 0.0;
 
-    //横に長く上下のゲートマスクが無い場合
+    // 複雑な条件は既存ロジックを維持
     if (viewport_aspect_ratio > device_aspect_ratio * overscan) {
         MGlobal::displayInfo(MString("if                                    :"));
         mask_height = 0;
         mask_width = (viewport_width - viewport_width / overscan) / 2;
     }
-    else if (device_aspect_ratio * overscan > viewport_aspect_ratio && viewport_aspect_ratio > device_aspect_ratio / viewport_aspect_ratio / overscan * 2) { //上下のゲートマスク有り
+    else if (device_aspect_ratio * overscan > viewport_aspect_ratio && viewport_aspect_ratio > device_aspect_ratio / viewport_aspect_ratio / overscan * 2) {
         MGlobal::displayInfo(MString("else if 01                                     :"));
         mask_height = (viewport_height - viewport_height / overscan) / 2 * (device_aspect_ratio * overscan - viewport_aspect_ratio) * 2;
         mask_width = (viewport_width - viewport_width / overscan) / 2;
     }
-    else if ((device_aspect_ratio - (viewport_aspect_ratio / overscan * 2)) < 0) { //縦に長く
+    else if ((device_aspect_ratio - (viewport_aspect_ratio / overscan * 2)) < 0) {
         MGlobal::displayInfo(MString("else if 02                                     :"));
         mask_height = (viewport_height - viewport_height / overscan) / 2 * device_aspect_ratio * device_aspect_ratio / (viewport_aspect_ratio / overscan * 2);
         mask_width = (viewport_width - viewport_width / overscan) / 2 * std::pow(((viewport_aspect_ratio / overscan * 2) - device_aspect_ratio) * overscan, 0.5);
     }
-
-    //縦に長く左右のゲートマスクが無い場合
     else {
         MGlobal::displayInfo(MString("else                                     :"));
         mask_height = (viewport_height - viewport_height / overscan) / 2 * device_aspect_ratio;
@@ -358,14 +356,14 @@ MPoint get_camera_resolution_fill(
     MGlobal::displayInfo(MString("viewport_aspect_ratio * overscan                              :") + (viewport_aspect_ratio * overscan));
     MGlobal::displayInfo(MString("device_aspect_ratio * overscan                                :") + (device_aspect_ratio * overscan));
     MGlobal::displayInfo(MString("(device_aspect_ratio * overscan - viewport_aspect_ratio) * 2  :") + ((device_aspect_ratio * overscan - viewport_aspect_ratio) * 2));
-    MGlobal::displayInfo(MString(" ( (viewport_aspect_ratio / overscan * 2) - device_aspect_ratio) * overscan:") + ((viewport_aspect_ratio / overscan * 2) - device_aspect_ratio) * overscan);
+    MGlobal::displayInfo(MString(" ( (viewport_aspect_ratio / overscan * 2) - device_aspect_ratio) * overscan:") + (((viewport_aspect_ratio / overscan * 2) - device_aspect_ratio) * overscan));
     MGlobal::displayInfo(MString("mask_height                                                   :") + mask_height);
     MGlobal::displayInfo(MString("mask_width                                                    :") + mask_width);
 
     return MPoint(mask_width, mask_height, 0.0);
 }
 
-MPoint get_camera_resolution_horizontal(
+MPoint computeCameraResolutionHorizontal(
     double overscan,
     int viewport_width,
     int viewport_height)
@@ -375,11 +373,13 @@ MPoint get_camera_resolution_horizontal(
     double mask_width = 0.0;
     double mask_height = 0.0;
 
-    if (viewport_aspect_ratio > device_aspect_ratio * overscan) { //横に長く上下のゲートマスクが無い場合
+    if (viewport_aspect_ratio > device_aspect_ratio * overscan) {
+        // viewport is wider than camera aspect with overscan
         mask_height = 0;
         mask_width = (viewport_width - viewport_width / overscan) / 2;
     }
-    else if (viewport_aspect_ratio < device_aspect_ratio * overscan) { //上下のゲートマスク有り
+    else if (viewport_aspect_ratio < device_aspect_ratio * overscan) {
+        // viewport is taller (or narrower) than camera aspect with overscan
         mask_height = (viewport_height - viewport_height / overscan) / 2 * (device_aspect_ratio * overscan - viewport_aspect_ratio) * 2;
         mask_width = (viewport_width - viewport_width / overscan) / 2;
     }
@@ -387,7 +387,7 @@ MPoint get_camera_resolution_horizontal(
     return MPoint(mask_width, mask_height, 0.0);
 }
 
-MString getFilmFitAsString(MFnCamera::FilmFit filmFit)
+MString filmFitToString(MFnCamera::FilmFit filmFit)
 {
     MString filmFitString;
     switch (filmFit)
@@ -411,7 +411,7 @@ MString getFilmFitAsString(MFnCamera::FilmFit filmFit)
     return filmFitString;
 }
 
-MString get_camera_cache(
+MString cameraCacheToString(
     bool camera_cache)
 {
     if (camera_cache) {
