@@ -12,9 +12,10 @@ set(PROJECT_NAME MayaCinematicCameraHUD)
 
 # set SOURCE_FILES
 set(SOURCE_FILES
-    src/CameraHudMain.cpp
     src/CameraHudManager.h
+    src/CameraHudMain.cpp
     src/CameraHudUtility.h
+    src/CameraHudUtility.cpp
 )
 
 # set linking libraries
