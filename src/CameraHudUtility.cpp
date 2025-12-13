@@ -21,6 +21,8 @@
 #include <iostream>
 #include "CameraHudUtility.h"
 
+namespace CameraHudUtility {
+
 std::string getCurrentDate()
 {
     // Œ»İ‚ğæ“¾
@@ -421,3 +423,5 @@ MString cameraCacheToString(
         return MString("Cache : OFF");
     }
 }
+
+} // namespace CameraHudUtility
