@@ -19,6 +19,8 @@
 #include <ctime>
 #include <cmath>
 
+namespace CameraHudUtility {
+
 // 今日の日付を "YYYY/MM/DD" 形式で取得
 std::string getCurrentDate();
 
@@ -148,3 +150,5 @@ MString filmFitToString(MFnCamera::FilmFit filmFit);
 
 // カメラキャッシュのアトリビュート状態を取得
 MString cameraCacheToString(bool cameraCache);
+
+} // namespace CameraHudUtility

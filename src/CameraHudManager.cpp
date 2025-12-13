@@ -4,7 +4,7 @@
 CameraHudManagerData::CameraHudManagerData()
     : MUserData(false)
 {
-    fCurrentDate = getCurrentDate().c_str();
-    fUserName = getUserName().c_str();
-    fSceneName = getSceneName();
+    fCurrentDate = CameraHudUtility::getCurrentDate().c_str();
+    fUserName = CameraHudUtility::getUserName().c_str();
+    fSceneName = CameraHudUtility::getSceneName();
 }
