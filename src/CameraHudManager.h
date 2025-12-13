@@ -35,7 +35,7 @@ public:
 
 // CemeraHudのデータクラス
 class CameraHudManagerData : public MUserData
- {
+{
 public:
     // テキスト情報の初期値
     MColor                      fColor{ 1.0f, 1.0f, 1.0f, 1.0f };
