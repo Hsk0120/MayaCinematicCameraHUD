@@ -19,14 +19,14 @@
 #include <ctime>
 #include <cmath>
 
-// 今日の日付を年/月/日 で取得する
-std::string get_current_date();
+// 今日の日付を "YYYY/MM/DD" 形式で取得
+std::string getCurrentDate();
 
-// MTimeのUnitからfpsを取得
-void convert_unitToTime(const MTime::Unit& unit, double& outFramesPerSecond);
+// MTime の Unit から FPS を取得
+void getFPSFromTimeUnit(const MTime::Unit& unit, double& outFramesPerSecond);
 
 // 秒数とfpsから時間:分:秒:フレーム を取得
-void convert_secondsToTime(
+void secondsToHMSF(
     double seconds,
     int& hours,
     int& minutes,
@@ -36,115 +36,115 @@ void convert_secondsToTime(
     MTime::Unit unit);
 
 // タイムコード取得
-MString get_current_timecode();
+MString getCurrentTimecode();
 
-// カレントフレームを取得する関数
-double get_current_frame();
+// カレントフレームを取得する
+double getCurrentFrame();
 
 // スタートフレーム取得
-double get_start_frame();
+double getStartFrame();
 
 // エンドフレームを取得
-double get_end_frame();
+double getEndFrame();
 
 // doubleからcharに変換 (バッファは呼び出し側で確保)
-void double_to_char(double value, char* str, int precision);
+void formatDoubleToBuffer(double value, char* str, int precision);
 
 // フレーム数の取得とプレフィックス付き文字列を返す
-MString get_frame(const char* prefix, double frame);
+MString formatFrameString(const char* prefix, double frame);
 
 // ユーザー名を取得
-std::string get_username();
+std::string getUserName();
 
 // シーン名取得
-MString get_scene_name();
+MString getSceneName();
 
-// カメラネームからShape削除
-MString get_camera_name(const std::string& camName);
+// カメラネームからシェイプ部分を取り除いた名前を返す
+MString getCameraNameFromString(const std::string& camName);
 
 // オブジェクトからネームスペースを取得
-MString GetNamespaceFromObject(const MDagPath& dagPath);
+MString getNamespaceFromDagPath(const MDagPath& dagPath);
 
 // カットナンバー取得
-MString get_cut_num(const MDagPath& camDagPath);
+MString getCutNumber(const MDagPath& camDagPath);
 
-// カメラの焦点距離を取得
-MString get_camera_focalLength(double focalLength);
+// カメラの焦点距離をフォーマットして返す
+MString formatFocalLength(double focalLength);
 
-// テキスト位置 左下
-MPoint get_viewport_leftBottom(
-    int num,
-    int width,
-    int height,
+// ビューポート上のテキスト位置を計算 (左下)
+MPoint computeViewportLeftBottom(
+    int index,
+    int viewportWidth,
+    int viewportHeight,
     double fontSize,
     MPoint offset,
     MPoint margin,
     MPoint maskOffset);
 
-// テキスト位置 左上
-MPoint get_viewport_leftTop(
-    int num,
-    int width,
-    int height,
+// 左上
+MPoint computeViewportLeftTop(
+    int index,
+    int viewportWidth,
+    int viewportHeight,
     double fontSize,
     MPoint offset,
     MPoint margin,
     MPoint maskOffset);
 
-// テキスト位置 右下
-MPoint get_viewport_rightBottom(
-    int num,
-    int width,
-    int height,
+// 右下
+MPoint computeViewportRightBottom(
+    int index,
+    int viewportWidth,
+    int viewportHeight,
     double fontSize,
     MPoint offset,
     MPoint margin,
     MPoint maskOffset);
 
-// テキスト位置 右上
-MPoint get_viewport_rightTop(
-    int num,
-    int width,
-    int height,
+// 右上
+MPoint computeViewportRightTop(
+    int index,
+    int viewportWidth,
+    int viewportHeight,
     double fontSize,
     MPoint offset,
     MPoint margin,
     MPoint maskOffset);
 
-// テキスト位置 真ん中下
-MPoint get_viewport_centerBottom(
-    int num,
-    int width,
-    int height,
+// 中央下
+MPoint computeViewportCenterBottom(
+    int index,
+    int viewportWidth,
+    int viewportHeight,
     double fontSize,
     MPoint offset,
     MPoint margin,
     MPoint maskOffset);
 
-// テキスト位置 真ん中上
-MPoint get_viewport_centerTop(
-    int num,
-    int width,
-    int height,
+// 中央上
+MPoint computeViewportCenterTop(
+    int index,
+    int viewportWidth,
+    int viewportHeight,
     double fontSize,
     MPoint offset,
     MPoint margin,
     MPoint maskOffset);
 
 // カメラのレゾリューションゲートマスク取得と計算 ※Fillの場合
-MPoint get_camera_resolution_fill(
+MPoint computeCameraResolutionFill(
     double overscan,
-    int viewport_width,
-    int viewport_height);
+    int viewportWidth,
+    int viewportHeight);
 
 // カメラのレゾリューションゲートマスク取得と計算 ※Horizontalの場合
-MPoint get_camera_resolution_horizontal(
+MPoint computeCameraResolutionHorizontal(
     double overscan,
-    int viewport_width,
-    int viewport_height);
+    int viewportWidth,
+    int viewportHeight);
 
-// filmFitを文字列に変換
-MString getFilmFitAsString(MFnCamera::FilmFit filmFit);
+// filmFit を文字列に変換
+MString filmFitToString(MFnCamera::FilmFit filmFit);
 
 // カメラキャッシュのアトリビュート状態を取得
-MString get_camera_cache(bool camera_cache);
+MString cameraCacheToString(bool cameraCache);

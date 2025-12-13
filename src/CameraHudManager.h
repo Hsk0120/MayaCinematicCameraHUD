@@ -1,39 +1,17 @@
 #pragma once
 
-#include <maya/MPxLocatorNode.h>
-#include <maya/MFnEnumAttribute.h>
-#include <maya/MFnNumericAttribute.h>
-#include <maya/MFnTypedAttribute.h>
-#include <maya/MFnStringData.h>
-#include <maya/MPoint.h>
-#include <maya/MDrawRegistry.h>
-#include <maya/MPxDrawOverride.h>
 #include <maya/MUserData.h>
+#include <maya/MPoint.h>
 #include <maya/MUIDrawManager.h>
-
-#include "CameraHudUtility.h"
-
-// CameraHud ノード
-class CameraHudNode : public MPxLocatorNode
-{
-public:
-    static void* creator();           // ノード生成関数
-    static MStatus initialize();      // アトリビュート登録
-
-    static MObject aText;
-    static MObject aTextBoxTransparency;
-    static MObject aTextFontSize;
-
-public:
-    static MTypeId id;
-    static MString drawDbClassification;
-    static MString drawRegistrantId;
-};
+#include <maya/MString.h>
+#include <maya/MColor.h>
 
 // CameraHud の描画データを保持するクラス
 class CameraHudManagerData : public MUserData
 {
 public:
+    CameraHudManagerData();
+
     // テキスト描画の設定
     MColor                      fColor{ 1.0f, 1.0f, 1.0f, 1.0f };
     float                       fLineWidth{ 2.f };
@@ -100,47 +78,21 @@ public:
     MPoint  fTimeCodePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fTimeCodeTextAlignment{ MUIDrawManager::kRight };
 
-    // 日付
-    MString fCurrentDate{ get_current_date().c_str() };
+    // 日付 (runtime 初期化)
+    MString fCurrentDate{ "" };
     int     fCurrentDateNum = 0;
     MPoint  fCurrentDatePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fCurrentDateTextAlignment{ MUIDrawManager::kRight };
 
-    // ユーザーネーム
-    MString fUserName{ get_username().c_str() };
+    // ユーザーネーム (runtime 初期化)
+    MString fUserName{ "" };
     int     fUserNameNum = 1;
     MPoint  fUserNamePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fUserNameTextAlignment{ MUIDrawManager::kRight };
 
-    // シーンネーム
-    MString fSceneName = get_scene_name();
+    // シーンネーム (runtime 初期化)
+    MString fSceneName{ "" };
     int     fSceneNameNum = 0;
     MPoint  fSceneNamePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fSceneNameTextAlignment{ MUIDrawManager::kCenter };
-};
-
-// カメラ用 HUD を描画するためのクラス
-class CameraHudDrawOverride : public MHWRender::MPxDrawOverride
-{
-public:
-    // インスタンス生成
-    static MHWRender::MPxDrawOverride* createCameraHud(const MObject& ownerCameraHudNode);
-
-    // 対応する描画 API
-    MHWRender::DrawAPI supportedDrawAPIs() const override;
-
-    // HUD は常に描画するためバウンディングは持たない
-    bool isBounded(const MDagPath& objPath, const MDagPath& cameraPath) const override;
-
-    // 計算結果や状態を MUserData にキャッシュ
-    MUserData* prepareForDraw(const MDagPath& objPath, const MDagPath& cameraPath, const MFrameContext& frameContext, MUserData* oldData) override;
-
-    // UI 描画を行う
-    bool hasUIDrawables() const override;
-
-    // MUIDrawManager を用いて UI 要素を追加
-    void addUIDrawables(const MDagPath& objPath, MHWRender::MUIDrawManager& drawManager, const MHWRender::MFrameContext& frameContext, const MUserData* data) override;
-
-private:
-    CameraHudDrawOverride(const MObject& ownerCameraHudNode);
 };
