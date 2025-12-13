@@ -1,4 +1,5 @@
 #include <maya/MFnDagNode.h>
+#include <maya/MFnPlugin.h>
 #include <iostream>
 #include <string>
 #include <maya/MFrameContext.h>
@@ -68,19 +69,14 @@ MUserData* CameraHudDrawOverride::prepareForDraw(
         //エンドフレームをセット
         data->fEndFrame = get_frame("End : ", get_end_frame());
 
-        //アトリビュートテキストをセット
-        //data->fText = MPlug(CameraHudNode, CameraHudNode::aText).asString();
-
         // カメラネームを取得してセット
         data->fCamera = get_camera_name(MFnDagNode(frameContext.getCurrentCameraPath(), &status).name().asChar());
 
         // カメラの焦点距離を取得してセット
         data->fFocalLength = get_camera_focalLength(MFnCamera(MFnDagNode(frameContext.getCurrentCameraPath(), &status).object()).focalLength());
 
-
         // カメラのキャッシュ状況を取得してセット
         bool camera_cache_bool = MFnDagNode(frameContext.getCurrentCameraPath(), &status).findPlug(MString("camera_cache")).asBool();
-        //bool camera_cache_bool = true;
         data->fCameraCache = get_camera_cache(camera_cache_bool);
 
         // カットナンバーを取得してセット
@@ -94,11 +90,9 @@ MUserData* CameraHudDrawOverride::prepareForDraw(
         MPlug plugTextBoxTransparency(CameraHudNode, CameraHudNode::aTextBoxTransparency);
         data->fTextBoxColor.a = 1.0f - plugTextBoxTransparency.asFloat();
 
-
         // ビューポートサイズ取得
         int a, b, width, height;
         frameContext.getViewportDimensions(a, b, width, height);
-
 
 
         // カメラのオーバースキャンを取得して、ゲートマスクオフセットの計算
@@ -122,9 +116,6 @@ MUserData* CameraHudDrawOverride::prepareForDraw(
         data->fMarginPosition = MPoint(data->fTextFontSize*0.1, (height - data->fMaskOffsetPosition.y * 2) * 0.08 * 0.7, 0);
         data->fOffsetPosition = MPoint(width * 0.01, (height - data->fMaskOffsetPosition.y * 2) * 0.005 * 0.7, 0);
 
-        // 各テキストのポジションを設定
-        //data->fPosition             = get_viewport_centerTop(data->fNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
-        
         data->fStartFramePosition   = get_viewport_leftBottom(data->fStartFrameNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
         data->fEndFramePosition     = get_viewport_leftBottom(data->fEndFrameNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
         data->fFramePosition        = get_viewport_leftBottom(data->fFrameNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
@@ -134,14 +125,12 @@ MUserData* CameraHudDrawOverride::prepareForDraw(
         data->fCutLengthPosition    = get_viewport_leftTop(data->fCutLengthNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
         data->fCameraCachePosition  = get_viewport_leftTop(data->fCameraCacheNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
 
-
         data->fTimeCodePosition     = get_viewport_rightBottom(data->fTimeCodeNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
         
         data->fCurrentDatePosition  = get_viewport_rightTop(data->fCurrentDateNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
         data->fUserNamePosition     = get_viewport_rightTop(data->fUserNameNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
 
         data->fSceneNamePosition    = get_viewport_centerBottom(data->fSceneNameNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
-    
     };
     return data;
 };
@@ -168,7 +157,6 @@ void CameraHudDrawOverride::addUIDrawables(
     // テスト　デプス確認
     drawManager.setDepthPriority(100);
 
-
     // テキストのスタイルをセット
     drawManager.setColor(thisdata->fColor);
     drawManager.setFontSize(thisdata->fTextFontSize);
@@ -177,9 +165,6 @@ void CameraHudDrawOverride::addUIDrawables(
     drawManager.setFontName(thisdata->fFontFaceName);
     int boxSize[] = { thisdata->fTextBoxWidth, thisdata->fTextBoxHeight };
 
-    // アトリビュートテキスト表示
-    //drawManager.text2d(thisdata->fPosition, thisdata->fText, thisdata->fTextAlignment,
-    //    boxSize[0] + boxSize[1] == 0 ? NULL : boxSize, &thisdata->fTextBoxColor, false);
     // カメラ名表示
     drawManager.text2d(thisdata->fCameraPosition, thisdata->fCamera, thisdata->fCameraTextAlignment,
         boxSize[0] + boxSize[1] == 0 ? NULL : boxSize, &thisdata->fTextBoxColor, false);
@@ -225,10 +210,6 @@ MStatus CameraHudNode::initialize()
     MFnNumericAttribute nAttr;
     MFnEnumAttribute eAttr;
     MFnTypedAttribute typedAttr;
-
-    // Add text attributes.
-    //aText = typedAttr.create("text", "t", MFnData::kString, MFnStringData().create("Text"));
-    //MPxNode::addAttribute(aText);
 
     aTextFontSize = nAttr.create("textFontSize", "tfs", MFnNumericData::kFloat,     1.0);
     nAttr.setMin(-1);

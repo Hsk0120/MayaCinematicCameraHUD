@@ -1,27 +1,24 @@
 #pragma once
+
 #include <maya/MPxLocatorNode.h>
-#include <maya/MFnPlugin.h>
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MFnStringData.h>
-#include <maya/MFnPointArrayData.h>
-#include <maya/MPointArray.h>
-#include <maya/MFloatPointArray.h>
-#include <maya/MUintArray.h>
+#include <maya/MPoint.h>
 #include <maya/MDrawRegistry.h>
 #include <maya/MPxDrawOverride.h>
 #include <maya/MUserData.h>
 #include <maya/MUIDrawManager.h>
-#include <algorithm>
+
 #include "CameraHudUtility.h"
 
-// CameraHudノード
+// CameraHud ノード
 class CameraHudNode : public MPxLocatorNode
 {
 public:
-    static void* creator(); //登録
-    static MStatus initialize(); //設定
+    static void* creator();           // ノード生成関数
+    static MStatus initialize();      // アトリビュート登録
 
     static MObject aText;
     static MObject aTextBoxTransparency;
@@ -33,11 +30,11 @@ public:
     static MString drawRegistrantId;
 };
 
-// CemeraHudのデータクラス
+// CameraHud の描画データを保持するクラス
 class CameraHudManagerData : public MUserData
 {
 public:
-    // テキスト情報の初期値
+    // テキスト描画の設定
     MColor                      fColor{ 1.0f, 1.0f, 1.0f, 1.0f };
     float                       fLineWidth{ 2.f };
     MString                     fFontFaceName = "Meiryo";
@@ -50,7 +47,7 @@ public:
     int                         fTextBoxHeight{ 0 };
     MColor                      fTextBoxColor{ 0.0f, 0.0f, 0.0f, 0.3f };
 
-    // オフセットマージン
+    // レイアウトオフセット
     MPoint  fOffsetPosition{ 20,20,0 };
     MPoint  fMarginPosition{ 0,50,0 };
     MPoint  fMaskOffsetPosition{ 0,0,0 };
@@ -64,7 +61,7 @@ public:
     // エンドフレーム
     MString fEndFrame{ "120f" };
     int     fEndFrameNum = 1;
-    MPoint  fEndFramePosition{ 0, 0, 0 };    
+    MPoint  fEndFramePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fEndFrameTextAlignment{ MUIDrawManager::kLeft };
 
     // カレントフレーム
@@ -73,12 +70,12 @@ public:
     MPoint  fFramePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fFrameTextAlignment{ MUIDrawManager::kLeft };
 
-    // カメラネーム
+    // カメラ名
     MString fCamera{ "uiDrawManager-Text" };
     int     fCameraNum = 0;
     MPoint  fCameraPosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fCameraTextAlignment{ MUIDrawManager::kLeft };
-    
+
     // 焦点距離
     MString fFocalLength{ "uiDrawManager-Text" };
     int     fFocalLengthNum = 1;
@@ -103,58 +100,47 @@ public:
     MPoint  fTimeCodePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fTimeCodeTextAlignment{ MUIDrawManager::kRight };
 
-    //日付
-    MString fCurrentDate{ get_current_date().data() };
+    // 日付
+    MString fCurrentDate{ get_current_date().c_str() };
     int     fCurrentDateNum = 0;
     MPoint  fCurrentDatePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fCurrentDateTextAlignment{ MUIDrawManager::kRight };
 
-    //ユーザーネーム
-    MString fUserName{ get_username().data() };
+    // ユーザーネーム
+    MString fUserName{ get_username().c_str() };
     int     fUserNameNum = 1;
     MPoint  fUserNamePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fUserNameTextAlignment{ MUIDrawManager::kRight };
 
-    //シーンネーム
+    // シーンネーム
     MString fSceneName = get_scene_name();
     int     fSceneNameNum = 0;
     MPoint  fSceneNamePosition{ 0, 0, 0 };
     MUIDrawManager::TextAlignment fSceneNameTextAlignment{ MUIDrawManager::kCenter };
 };
 
-// カメラ用 HUD を描画するためのクラス。
+// カメラ用 HUD を描画するためのクラス
 class CameraHudDrawOverride : public MHWRender::MPxDrawOverride
 {
 public:
-	// CameraHudDrawOverride クラスのインスタンスを生成
+    // インスタンス生成
     static MHWRender::MPxDrawOverride* createCameraHud(const MObject& ownerCameraHudNode);
 
-    // 対応する描画 API（OpenGL / DirectX 等）を返す
+    // 対応する描画 API
     MHWRender::DrawAPI supportedDrawAPIs() const override;
 
-    // バウンディングボックスを持たない（HUD は常に描画する）
-    bool isBounded(
-        const MDagPath& objPath,
-        const MDagPath& cameraPath) const override;
+    // HUD は常に描画するためバウンディングは持たない
+    bool isBounded(const MDagPath& objPath, const MDagPath& cameraPath) const override;
 
     // 計算結果や状態を MUserData にキャッシュ
-    MUserData* prepareForDraw(
-        const MDagPath& objPath,
-        const MDagPath& cameraPath,
-        const MFrameContext& frameContext,
-        MUserData* oldData) override;
+    MUserData* prepareForDraw(const MDagPath& objPath, const MDagPath& cameraPath, const MFrameContext& frameContext, MUserData* oldData) override;
 
-    // このクラスが UI 描画（2D テキストなど）を行う True。
+    // UI 描画を行う
     bool hasUIDrawables() const override;
 
-    // 実際の UI 要素（HUD テキストやラインなど）を追加するメソッド。MUIDrawManagerを使用して描画指示を行う
-    void addUIDrawables(
-        const MDagPath& objPath,
-        MHWRender::MUIDrawManager& drawManager,
-        const MHWRender::MFrameContext& frameContext,
-        const MUserData* data) override;
+    // MUIDrawManager を用いて UI 要素を追加
+    void addUIDrawables(const MDagPath& objPath, MHWRender::MUIDrawManager& drawManager, const MHWRender::MFrameContext& frameContext, const MUserData* data) override;
 
 private:
-    // 外部から newさせないためにコンストラクタは private化
     CameraHudDrawOverride(const MObject& ownerCameraHudNode);
 };

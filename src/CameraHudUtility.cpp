@@ -1,4 +1,3 @@
-#pragma once
 #include <maya/MGlobal.h>
 #include <maya/MString.h>
 #include <maya/MTime.h>
@@ -38,53 +37,50 @@ std::string get_current_date()
 }
 
 void convert_unitToTime(
-	const MTime::Unit& unit, 
-	double& framesPerSecond)
+    const MTime::Unit& unit,
+    double& framesPerSecond)
 {
-	switch (unit) {
-	case MTime::kGames:
-		framesPerSecond = 15.0;
-		break;
-	case MTime::kFilm:
-		framesPerSecond = 24.0;
-		break;
-	case MTime::kPALFrame:
-		framesPerSecond = 25.0;
-		break;
-	case MTime::kNTSCFrame:
-		framesPerSecond = 30.0;
-		break;
-	case MTime::kShowScan:
-		framesPerSecond = 48.0;
-		break;
-	case MTime::kPALField:
-		framesPerSecond = 50.0;
-		break;
-	case MTime::kNTSCField:
-		framesPerSecond = 60.0;
-		break;
-	case MTime::k120FPS:
-		framesPerSecond = 120.0;
-		break;
-	default:
-		framesPerSecond = 60.0;
-		break;
-	}
+    switch (unit) {
+    case MTime::kGames:
+        framesPerSecond = 15.0;
+        break;
+    case MTime::kFilm:
+        framesPerSecond = 24.0;
+        break;
+    case MTime::kPALFrame:
+        framesPerSecond = 25.0;
+        break;
+    case MTime::kNTSCFrame:
+        framesPerSecond = 30.0;
+        break;
+    case MTime::kShowScan:
+        framesPerSecond = 48.0;
+        break;
+    case MTime::kPALField:
+        framesPerSecond = 50.0;
+        break;
+    case MTime::kNTSCField:
+        framesPerSecond = 60.0;
+        break;
+    case MTime::k120FPS:
+        framesPerSecond = 120.0;
+        break;
+    default:
+        framesPerSecond = 60.0;
+        break;
+    }
 }
 
 void convert_secondsToTime(
-    double seconds, 
-    int& hours, 
-    int& minutes, 
-    int& secondsOut, 
-    int& frames, 
-    double framesPerSecond, 
-    MTime::Unit unit) 
+    double seconds,
+    int& hours,
+    int& minutes,
+    int& secondsOut,
+    int& frames,
+    double framesPerSecond,
+    MTime::Unit unit)
 {
     convert_unitToTime(unit, framesPerSecond);
-
-    const int framesPerMinute = 60 * static_cast<int>(framesPerSecond);
-    const int framesPerHour = 60 * framesPerMinute;
 
     // Compute the number of hours, minutes, and seconds
     hours = static_cast<int>(std::floor(seconds / 3600.0));
@@ -112,7 +108,7 @@ void convert_secondsToTime(
     }
 }
 
-MString get_current_timecode() 
+MString get_current_timecode()
 {
     MTime currentTime = MAnimControl::currentTime();
     double currentSeconds = currentTime.as(MTime::kSeconds);
@@ -154,26 +150,20 @@ double get_end_frame()
 }
 
 void double_to_char(
-    double value, char* str, 
+    double value, char* str,
     int precision)
 {
     sprintf(str, "%.*f", precision, value);
 }
 
-char* get_frame(
-    static char result[64], 
-    double frame)
+MString get_frame(const char* prefix, double frame)
 {
-    static char str[64];
-    static char num[64];
-    double_to_char(frame, num, 0);
-    strcpy(str, result);
-    strcat(str, num);
-    strcat(str, "f"); // "f"ÇåãçáÇ∑ÇÈ
-    return str;
+    std::stringstream ss;
+    ss << prefix << static_cast<int>(std::round(frame)) << "f";
+    return MString(ss.str().c_str());
 }
 
-std::string get_username() 
+std::string get_username()
 {
     char username[UNLEN + 1];
     DWORD size = sizeof(username);
@@ -186,21 +176,22 @@ std::string get_username()
     }
 }
 
-MString get_scene_name() {
+MString get_scene_name()
+{
     MString fileObj = MFileIO::currentFile();
     MStringArray nameArray;
     fileObj.split('/', nameArray);
     return nameArray[nameArray.length() - 1];
 }
 
-MString get_camera_name(
-    std::string camName)
+MString get_camera_name(const std::string& camName)
 {
-    std::size_t pos = camName.find("Shape");  // "shape" ÇÃà íuÇåüçı
-    if (pos != std::string::npos) {  // "shape" Ç™å©Ç¬Ç©Ç¡ÇΩèÍçá
-        camName.erase(pos);  // "shape" à»ç~ÇÃï∂éöóÒÇçÌèú
+    std::string local = camName;
+    std::size_t pos = local.find("Shape");
+    if (pos != std::string::npos) {
+        local.erase(pos);
     }
-    return MString(camName.data());
+    return MString(local.c_str());
 }
 
 MString GetNamespaceFromObject(
@@ -219,7 +210,7 @@ MString GetNamespaceFromObject(
 }
 
 MString get_cut_num(
-    const MDagPath& camDagPath) 
+    const MDagPath& camDagPath)
 {
     MString namespaceName = GetNamespaceFromObject(camDagPath);
     return namespaceName;
@@ -228,22 +219,20 @@ MString get_cut_num(
 MString get_camera_focalLength(
     double focalLength)
 {
-    static char str[64];
-    static char num[64];
+    char str[64];
     double_to_char(focalLength, str, 2);
     strcat(str, "mm"); // "mm"ÇåãçáÇ∑ÇÈ
     return MString(str);
 }
 
-
 MPoint get_viewport_leftBottom(
-    int num, 
-    int width, 
-    int height, 
+    int num,
+    int width,
+    int height,
     double fontSize,
     MPoint offset,
-    MPoint margin, 
-    MPoint maskOffset) 
+    MPoint margin,
+    MPoint maskOffset)
 {
     return MPoint(
         offset.x + margin.x + maskOffset.x,
@@ -252,13 +241,13 @@ MPoint get_viewport_leftBottom(
 }
 
 MPoint get_viewport_leftTop(
-    int num, 
-    int width, 
-    int height, 
-    double fontSize, 
-    MPoint offset, 
-    MPoint margin, 
-    MPoint maskOffset) 
+    int num,
+    int width,
+    int height,
+    double fontSize,
+    MPoint offset,
+    MPoint margin,
+    MPoint maskOffset)
 {
     return MPoint(
         offset.x + margin.x + maskOffset.x,
@@ -267,13 +256,13 @@ MPoint get_viewport_leftTop(
 }
 
 MPoint get_viewport_rightBottom(
-    int num, 
-    int width, 
-    int height, 
-    double fontSize, 
-    MPoint offset, 
-    MPoint margin, 
-    MPoint maskOffset) 
+    int num,
+    int width,
+    int height,
+    double fontSize,
+    MPoint offset,
+    MPoint margin,
+    MPoint maskOffset)
 {
     return MPoint(
         width - offset.x - margin.x - maskOffset.x,
@@ -282,13 +271,13 @@ MPoint get_viewport_rightBottom(
 }
 
 MPoint get_viewport_rightTop(
-    int num, 
-    int width, 
-    int height, 
-    double fontSize, 
-    MPoint offset, 
-    MPoint margin, 
-    MPoint maskOffset) 
+    int num,
+    int width,
+    int height,
+    double fontSize,
+    MPoint offset,
+    MPoint margin,
+    MPoint maskOffset)
 {
     return MPoint(
         width - offset.x - margin.x - maskOffset.x,
@@ -297,12 +286,12 @@ MPoint get_viewport_rightTop(
 }
 
 MPoint get_viewport_centerBottom(
-    int num, 
-    int width, 
-    int height, 
-    double fontSize, 
-    MPoint offset, 
-    MPoint margin, 
+    int num,
+    int width,
+    int height,
+    double fontSize,
+    MPoint offset,
+    MPoint margin,
     MPoint maskOffset)
 {
     return MPoint(
@@ -312,12 +301,12 @@ MPoint get_viewport_centerBottom(
 }
 
 MPoint get_viewport_centerTop(
-    int num, 
-    int width, 
-    int height, 
-    double fontSize, 
-    MPoint offset, 
-    MPoint margin, 
+    int num,
+    int width,
+    int height,
+    double fontSize,
+    MPoint offset,
+    MPoint margin,
     MPoint maskOffset)
 {
     return MPoint(
@@ -329,7 +318,7 @@ MPoint get_viewport_centerTop(
 MPoint get_camera_resolution_fill(
     double overscan,
     int viewport_width,
-    int viewport_height) 
+    int viewport_height)
 {
     double device_aspect_ratio = 1.778;
     double viewport_aspect_ratio = static_cast<double>(viewport_width) / static_cast<double>(viewport_height);
@@ -373,14 +362,13 @@ MPoint get_camera_resolution_fill(
     MGlobal::displayInfo(MString("mask_height                                                   :") + mask_height);
     MGlobal::displayInfo(MString("mask_width                                                    :") + mask_width);
 
-
     return MPoint(mask_width, mask_height, 0.0);
 }
 
 MPoint get_camera_resolution_horizontal(
     double overscan,
     int viewport_width,
-    int viewport_height) 
+    int viewport_height)
 {
     double device_aspect_ratio = 1.778;
     double viewport_aspect_ratio = static_cast<double>(viewport_width) / static_cast<double>(viewport_height);
@@ -399,11 +387,8 @@ MPoint get_camera_resolution_horizontal(
     return MPoint(mask_width, mask_height, 0.0);
 }
 
-MString getFilmFitAsString(
-    const MFnCamera::FilmFit& filmFit)
+MString getFilmFitAsString(MFnCamera::FilmFit filmFit)
 {
-    MGlobal::displayInfo("-----------------check-------------------");
-
     MString filmFitString;
     switch (filmFit)
     {
@@ -422,11 +407,8 @@ MString getFilmFitAsString(
     default:
         MGlobal::displayError("Unknown film fit.");
         return MString();
-        break;
     }
-    MGlobal::displayInfo(MString("filmFitString:") + filmFitString);
     return filmFitString;
-
 }
 
 MString get_camera_cache(
