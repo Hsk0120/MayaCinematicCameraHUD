@@ -21,10 +21,19 @@
 #include <iostream>
 #include "CameraHudUtility.h"
 
+// Qt Core includes for verification
+#include <QtCore/QString>
+#include <QtCore/QDateTime>
+#include <QtCore/QCoreApplication>
+
 namespace CameraHudUtility {
 
 std::string getCurrentDate()
 {
+    // Qt版の実装も試す（検証用）
+    // QString qtDate = QDate::currentDate().toString("yyyy/MM/dd");
+    // MGlobal::displayInfo(MString("Qt Date: ") + qtDate.toStdString().c_str());
+    
     // 現在時刻を取得
     auto now = std::chrono::system_clock::now();
     std::time_t time_now = std::chrono::system_clock::to_time_t(now);
@@ -422,6 +431,22 @@ MString cameraCacheToString(
     else {
         return MString("Cache : OFF");
     }
+}
+
+std::string testQtCore()
+{
+    // Qt Core の機能を使ってテスト
+    QString testString = QString("Qt Core is working! Current time: %1")
+        .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
+    
+    // Maya のログに出力
+    MGlobal::displayInfo(MString("Qt Test: ") + testString.toStdString().c_str());
+    
+    // Qt のバージョン情報も取得
+    QString versionInfo = QString("Qt Version: %1").arg(qVersion());
+    MGlobal::displayInfo(MString("Qt Version: ") + versionInfo.toStdString().c_str());
+    
+    return testString.toStdString();
 }
 
 } // namespace CameraHudUtility
