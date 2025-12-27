@@ -103,7 +103,7 @@ MUserData* CameraHudDrawOverride::prepareForDraw(
         }
 
         // ビューポートサイズからフォントサイズを変更
-        data->fTextFontSize = data->fTextFontSize * (height - data->fMaskOffsetPosition.y * 2) * 0.05 * 0.7;
+        data->fTextFontSize = data->fTextFontSize;
         data->fMarginPosition = MPoint(data->fTextFontSize*0.1, (height - data->fMaskOffsetPosition.y * 2) * 0.08 * 0.7, 0);
         data->fOffsetPosition = MPoint(width * 0.01, (height - data->fMaskOffsetPosition.y * 2) * 0.005 * 0.7, 0);
 

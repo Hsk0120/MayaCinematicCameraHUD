@@ -151,4 +151,10 @@ MString filmFitToString(MFnCamera::FilmFit filmFit);
 // カメラキャッシュのアトリビュート状態を取得
 MString cameraCacheToString(bool cameraCache);
 
+// Mayaのデフォルト文字サイズを取得
+double getDefaultFontSize();
+
+// Qt Core 検証用関数
+std::string testQtCore();
+
 } // namespace CameraHudUtility
