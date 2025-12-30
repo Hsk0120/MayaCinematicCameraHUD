@@ -441,6 +441,9 @@ double getDefaultFontSize()
     // Maya標準のデフォルトフォントサイズ
     // MayaのUI DPIは96 DPI（Windows標準）を基準としています
     // このプラグインでは相対的なスケール値として1.0を使用
+    // この値は、Maya Viewport 2.0のdrawManager.setFontSize()で使用される
+    // スケール係数で、実際のピクセルサイズはビューポートのサイズに応じて
+    // 自動的にスケーリングされます
     return 1.0;
 }
 
