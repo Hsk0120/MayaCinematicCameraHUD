@@ -30,18 +30,18 @@ namespace CameraHudUtility {
 
 std::string getCurrentDate()
 {
-    // Qt”Å‚ÌÀ‘•‚à‚·iŒŸØ—pj
+    // Qtï¿½Å‚Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½Ø—pï¿½j
     // QString qtDate = QDate::currentDate().toString("yyyy/MM/dd");
     // MGlobal::displayInfo(MString("Qt Date: ") + qtDate.toStdString().c_str());
     
-    // Œ»İ‚ğæ“¾
+    // ï¿½ï¿½ï¿½İï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ“¾
     auto now = std::chrono::system_clock::now();
     std::time_t time_now = std::chrono::system_clock::to_time_t(now);
 
-    // tm \‘Ì‚É•ÏŠ·
+    // tm ï¿½\ï¿½Ì‚É•ÏŠï¿½
     std::tm* time_info = std::localtime(&time_now);
 
-    // ƒtƒH[ƒ}ƒbƒg
+    // ï¿½tï¿½Hï¿½[ï¿½}ï¿½bï¿½g
     std::stringstream ss;
     ss << std::put_time(time_info, "%Y/%m/%d");
     return ss.str();
@@ -93,7 +93,7 @@ void secondsToHMSF(
 {
     getFPSFromTimeUnit(unit, framesPerSecond);
 
-    // ŠÔA•ªA•b‚ğŒvZ
+    // ï¿½ï¿½ï¿½ÔAï¿½ï¿½ï¿½Aï¿½bï¿½ï¿½ï¿½vï¿½Z
     hours = static_cast<int>(std::floor(seconds / 3600.0));
     seconds -= hours * 3600.0;
     minutes = static_cast<int>(std::floor(seconds / 60.0));
@@ -102,7 +102,7 @@ void secondsToHMSF(
     seconds -= secondsOut;
     frames = static_cast<int>(std::round(seconds * framesPerSecond));
 
-    // ƒtƒŒ[ƒ€”‚ÌƒI[ƒo[ƒtƒ[‚ğ’²®
+    // ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ÌƒIï¿½[ï¿½oï¿½[ï¿½tï¿½ï¿½ï¿½[ï¿½ğ’²ï¿½
     if (frames >= static_cast<int>(framesPerSecond)) {
         frames = 0;
         ++secondsOut;
@@ -211,10 +211,10 @@ MString getNamespaceFromDagPath(
     MStatus status;
     MString namespaceObj = MNamespace::getNamespaceFromName(dagPath.partialPathName(), &status);
 
-    // ’·‚³æ“¾
+    // ï¿½ï¿½ï¿½ï¿½ï¿½æ“¾
     int length = namespaceObj.length();
 
-    // ––”ö3•¶š‚ğØ‚èæ‚Á‚Ä•\¦—p‚É‚·‚é
+    // ï¿½ï¿½ï¿½ï¿½3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø‚ï¿½ï¿½ï¿½ï¿½Ä•\ï¿½ï¿½ï¿½pï¿½É‚ï¿½ï¿½ï¿½
     MString cut_number = namespaceObj.substring(length - 3, length);
     cut_number = MString("Cut:") + cut_number;
     return cut_number;
@@ -336,7 +336,7 @@ MPoint computeCameraResolutionFill(
     double mask_width = 0.0;
     double mask_height = 0.0;
 
-    // •¡G‚ÈğŒ‚ÍŠù‘¶ƒƒWƒbƒN‚ğˆÛ
+    // ï¿½ï¿½ï¿½Gï¿½Èï¿½ï¿½ï¿½ï¿½ÍŠï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½bï¿½Nï¿½ï¿½ï¿½Ûï¿½
     if (viewport_aspect_ratio > device_aspect_ratio * overscan) {
         MGlobal::displayInfo(MString("if                                    :"));
         mask_height = 0;
@@ -433,16 +433,27 @@ MString cameraCacheToString(
     }
 }
 
+// Mayaã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ–‡å­—ã‚µã‚¤ã‚ºã‚’å–å¾—
+// Mayaã®æ¨™æº–DPIã¯96 DPIã§ã™
+// ã“ã®é–¢æ•°ã¯Mayaã®UIè¡¨ç¤ºã«ãŠã‘ã‚‹æ¨™æº–çš„ãªãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã®åŸºæº–å€¤ã‚’è¿”ã—ã¾ã™
+double getDefaultFontSize()
+{
+    // Mayaæ¨™æº–ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
+    // Mayaã®UI DPIã¯96 DPIï¼ˆWindowsæ¨™æº–ï¼‰ã‚’åŸºæº–ã¨ã—ã¦ã„ã¾ã™
+    // ã“ã®ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã§ã¯ç›¸å¯¾çš„ãªã‚¹ã‚±ãƒ¼ãƒ«å€¤ã¨ã—ã¦1.0ã‚’ä½¿ç”¨
+    return 1.0;
+}
+
 std::string testQtCore()
 {
-    // Qt Core ‚Ì‹@”\‚ğg‚Á‚ÄƒeƒXƒg
+    // Qt Core ï¿½Ì‹@ï¿½\ï¿½ï¿½ï¿½gï¿½ï¿½ï¿½Äƒeï¿½Xï¿½g
     QString testString = QString("Qt Core is working! Current time: %1")
         .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
     
-    // Maya ‚ÌƒƒO‚Éo—Í
+    // Maya ï¿½Ìƒï¿½ï¿½Oï¿½Éoï¿½ï¿½
     MGlobal::displayInfo(MString("Qt Test: ") + testString.toStdString().c_str());
     
-    // Qt ‚Ìƒo[ƒWƒ‡ƒ“î•ñ‚àæ“¾
+    // Qt ï¿½Ìƒoï¿½[ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ“¾
     QString versionInfo = QString("Qt Version: %1").arg(qVersion());
     MGlobal::displayInfo(MString("Qt Version: ") + versionInfo.toStdString().c_str());
     

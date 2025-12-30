@@ -152,6 +152,7 @@ MString filmFitToString(MFnCamera::FilmFit filmFit);
 MString cameraCacheToString(bool cameraCache);
 
 // Mayaのデフォルト文字サイズを取得
+// Mayaの標準DPIは96 DPIを使用しています
 double getDefaultFontSize();
 
 // Qt Core 検証用関数
