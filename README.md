@@ -8,5 +8,4 @@ Mayaでのシネマティック演出向けカメラHUD機能を提供するプ�
 
 - **Maya UI DPI**: 96 DPI
 - **デフォルトフォントサイズ**: 1.0（相対的なスケール値）
-
-Maya's standard DPI setting is **96 DPI** (Windows standard), which this plugin uses as a baseline for UI rendering and font sizing.
+- **スケーリング**: ビューポートサイズに応じて自動的にスケーリングされます
