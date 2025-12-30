@@ -436,6 +436,8 @@ MString cameraCacheToString(
 // Mayaのデフォルト文字サイズを取得
 // Mayaの標準DPIは96 DPIです
 // この関数はMayaのUI表示における標準的なフォントサイズの基準値を返します
+// Get Maya's default font size (Maya standard DPI: 96 DPI)
+// Returns the base scale factor for font rendering in Maya UI
 double getDefaultFontSize()
 {
     // Maya標準のデフォルトフォントサイズ
@@ -444,6 +446,9 @@ double getDefaultFontSize()
     // この値は、Maya Viewport 2.0のdrawManager.setFontSize()で使用される
     // スケール係数で、実際のピクセルサイズはビューポートのサイズに応じて
     // 自動的にスケーリングされます
+    // 
+    // Returns 1.0 as the scale coefficient for drawManager.setFontSize()
+    // Actual pixel size is automatically scaled based on viewport dimensions
     return 1.0;
 }
 
