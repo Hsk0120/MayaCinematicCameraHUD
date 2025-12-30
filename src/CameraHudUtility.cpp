@@ -30,18 +30,18 @@ namespace CameraHudUtility {
 
 std::string getCurrentDate()
 {
-    // Qtï¿½Å‚Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½Ø—pï¿½j
+    // Qt”Å‚ÌÀ‘•‚à‚·iŒŸØ—pj
     // QString qtDate = QDate::currentDate().toString("yyyy/MM/dd");
     // MGlobal::displayInfo(MString("Qt Date: ") + qtDate.toStdString().c_str());
     
-    // ï¿½ï¿½ï¿½İï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ“¾
+    // Œ»İ‚ğæ“¾
     auto now = std::chrono::system_clock::now();
     std::time_t time_now = std::chrono::system_clock::to_time_t(now);
 
-    // tm ï¿½\ï¿½Ì‚É•ÏŠï¿½
+    // tm \‘Ì‚É•ÏŠ·
     std::tm* time_info = std::localtime(&time_now);
 
-    // ï¿½tï¿½Hï¿½[ï¿½}ï¿½bï¿½g
+    // ƒtƒH[ƒ}ƒbƒg
     std::stringstream ss;
     ss << std::put_time(time_info, "%Y/%m/%d");
     return ss.str();
@@ -93,7 +93,7 @@ void secondsToHMSF(
 {
     getFPSFromTimeUnit(unit, framesPerSecond);
 
-    // ï¿½ï¿½ï¿½ÔAï¿½ï¿½ï¿½Aï¿½bï¿½ï¿½ï¿½vï¿½Z
+    // ŠÔA•ªA•b‚ğŒvZ
     hours = static_cast<int>(std::floor(seconds / 3600.0));
     seconds -= hours * 3600.0;
     minutes = static_cast<int>(std::floor(seconds / 60.0));
@@ -102,7 +102,7 @@ void secondsToHMSF(
     seconds -= secondsOut;
     frames = static_cast<int>(std::round(seconds * framesPerSecond));
 
-    // ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ÌƒIï¿½[ï¿½oï¿½[ï¿½tï¿½ï¿½ï¿½[ï¿½ğ’²ï¿½
+    // ƒtƒŒ[ƒ€”‚ÌƒI[ƒo[ƒtƒ[‚ğ’²®
     if (frames >= static_cast<int>(framesPerSecond)) {
         frames = 0;
         ++secondsOut;
@@ -211,10 +211,10 @@ MString getNamespaceFromDagPath(
     MStatus status;
     MString namespaceObj = MNamespace::getNamespaceFromName(dagPath.partialPathName(), &status);
 
-    // ï¿½ï¿½ï¿½ï¿½ï¿½æ“¾
+    // ’·‚³æ“¾
     int length = namespaceObj.length();
 
-    // ï¿½ï¿½ï¿½ï¿½3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø‚ï¿½ï¿½ï¿½ï¿½Ä•\ï¿½ï¿½ï¿½pï¿½É‚ï¿½ï¿½ï¿½
+    // ––”ö3•¶š‚ğØ‚èæ‚Á‚Ä•\¦—p‚É‚·‚é
     MString cut_number = namespaceObj.substring(length - 3, length);
     cut_number = MString("Cut:") + cut_number;
     return cut_number;
@@ -336,7 +336,7 @@ MPoint computeCameraResolutionFill(
     double mask_width = 0.0;
     double mask_height = 0.0;
 
-    // ï¿½ï¿½ï¿½Gï¿½Èï¿½ï¿½ï¿½ï¿½ÍŠï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½bï¿½Nï¿½ï¿½ï¿½Ûï¿½
+    // •¡G‚ÈğŒ‚ÍŠù‘¶ƒƒWƒbƒN‚ğˆÛ
     if (viewport_aspect_ratio > device_aspect_ratio * overscan) {
         MGlobal::displayInfo(MString("if                                    :"));
         mask_height = 0;
@@ -433,35 +433,16 @@ MString cameraCacheToString(
     }
 }
 
-// Mayaã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ–‡å­—ã‚µã‚¤ã‚ºã‚’å–å¾—
-// Mayaã®æ¨™æº–DPIã¯96 DPIã§ã™
-// ã“ã®é–¢æ•°ã¯Mayaã®UIè¡¨ç¤ºã«ãŠã‘ã‚‹æ¨™æº–çš„ãªãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã®åŸºæº–å€¤ã‚’è¿”ã—ã¾ã™
-// Get Maya's default font size (Maya standard DPI: 96 DPI)
-// Returns the base scale factor for font rendering in Maya UI
-double getDefaultFontSize()
-{
-    // Mayaæ¨™æº–ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
-    // Mayaã®UI DPIã¯96 DPIï¼ˆWindowsæ¨™æº–ï¼‰ã‚’åŸºæº–ã¨ã—ã¦ã„ã¾ã™
-    // ã“ã®ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã§ã¯ç›¸å¯¾çš„ãªã‚¹ã‚±ãƒ¼ãƒ«å€¤ã¨ã—ã¦1.0ã‚’ä½¿ç”¨
-    // ã“ã®å€¤ã¯ã€Maya Viewport 2.0ã®drawManager.setFontSize()ã§ä½¿ç”¨ã•ã‚Œã‚‹
-    // ã‚¹ã‚±ãƒ¼ãƒ«ä¿‚æ•°ã§ã€å®Ÿéš›ã®ãƒ”ã‚¯ã‚»ãƒ«ã‚µã‚¤ã‚ºã¯ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã®ã‚µã‚¤ã‚ºã«å¿œã˜ã¦
-    // è‡ªå‹•çš„ã«ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°ã•ã‚Œã¾ã™
-    // 
-    // Returns 1.0 as the scale coefficient for drawManager.setFontSize()
-    // Actual pixel size is automatically scaled based on viewport dimensions
-    return 1.0;
-}
-
 std::string testQtCore()
 {
-    // Qt Core ï¿½Ì‹@ï¿½\ï¿½ï¿½ï¿½gï¿½ï¿½ï¿½Äƒeï¿½Xï¿½g
+    // Qt Core ‚Ì‹@”\‚ğg‚Á‚ÄƒeƒXƒg
     QString testString = QString("Qt Core is working! Current time: %1")
         .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
     
-    // Maya ï¿½Ìƒï¿½ï¿½Oï¿½Éoï¿½ï¿½
+    // Maya ‚ÌƒƒO‚Éo—Í
     MGlobal::displayInfo(MString("Qt Test: ") + testString.toStdString().c_str());
     
-    // Qt ï¿½Ìƒoï¿½[ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ“¾
+    // Qt ‚Ìƒo[ƒWƒ‡ƒ“î•ñ‚àæ“¾
     QString versionInfo = QString("Qt Version: %1").arg(qVersion());
     MGlobal::displayInfo(MString("Qt Version: ") + versionInfo.toStdString().c_str());
     
