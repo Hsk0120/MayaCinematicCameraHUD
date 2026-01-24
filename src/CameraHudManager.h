@@ -17,7 +17,6 @@ public:
     float                       fLineWidth{ 2.f };
     MString                     fFontFaceName = "Meiryo";
     MUIDrawManager::LineStyle   fLineStyle{ MUIDrawManager::kSolid };
-    float                       fTextFontSize{ 1.0 };
     unsigned int                fFontFaceIndex{ 0 };
     int                         fTextIncline{ MUIDrawManager::kInclineNormal };
     int                         fTextWeight{ MUIDrawManager::kWeightNormal };

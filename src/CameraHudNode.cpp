@@ -1,4 +1,5 @@
 #include "CameraHudNode.h"
+#include "CameraHudUtility.h"
 
 MObject CameraHudNode::aText;
 MObject CameraHudNode::aTextBoxTransparency;
@@ -18,7 +19,8 @@ MStatus CameraHudNode::initialize()
     MStatus status;
     MFnNumericAttribute nAttr;
 
-    aTextFontSize = nAttr.create("textFontSize", "tfs", MFnNumericData::kFloat,     1.0);
+	double defaultFontSize = CameraHudUtility::getDefaultFontSize();
+    aTextFontSize = nAttr.create("textFontSize", "tfs", MFnNumericData::kFloat, defaultFontSize);
     nAttr.setMin(-1);
     nAttr.setMax(99);
     MPxNode::addAttribute(aTextFontSize);

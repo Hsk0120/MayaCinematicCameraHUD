@@ -26,6 +26,8 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QCoreApplication>
 
+#include <maya/MQtUtil.h>
+
 namespace CameraHudUtility {
 
 std::string getCurrentDate()
@@ -431,6 +433,13 @@ MString cameraCacheToString(
     else {
         return MString("Cache : OFF");
     }
+}
+
+double getDefaultFontSize()
+{
+    // DPIスケール値を取得
+    //double scaleValue = MQtUtil::dpiScale();
+    return 12.0;
 }
 
 std::string testQtCore()
