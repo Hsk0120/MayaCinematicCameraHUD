@@ -10,7 +10,8 @@
 
 CameraHudDrawOverride::CameraHudDrawOverride(
     const MObject& ownerCameraHudNode)
-    : MPxDrawOverride(ownerCameraHudNode, nullptr)
+    : MPxDrawOverride(ownerCameraHudNode, nullptr),
+      mTextFontSize(static_cast<float>(CameraHudUtility::getDefaultFontSize()))
 {
 }
 
@@ -75,7 +76,7 @@ MUserData* CameraHudDrawOverride::prepareForDraw(
 
         // テキストサイズ取得
         MPlug plugTextFontSize(CameraHudNode, CameraHudNode::aTextFontSize);
-        data->fTextFontSize = plugTextFontSize.asFloat();
+        mTextFontSize = plugTextFontSize.asFloat();
 
         // テキストボックスの透明度取得
         MPlug plugTextBoxTransparency(CameraHudNode, CameraHudNode::aTextBoxTransparency);
@@ -85,8 +86,7 @@ MUserData* CameraHudDrawOverride::prepareForDraw(
         int a, b, width, height;
         frameContext.getViewportDimensions(a, b, width, height);
 
-
-        // カメラのオーバースキャンを取得して、ゲートマスクオフセットの計算
+        // カメラのオーバースキャンを取得し、ゲートマスクオフsetの計算
         double overscan = MFnCamera(camDag.object()).overscan();
         if (overscan != 1) {
             MString filmFit = CameraHudUtility::filmFitToString(MFnCamera(camDag.object()).filmFit());
@@ -102,26 +102,25 @@ MUserData* CameraHudDrawOverride::prepareForDraw(
             data->fMaskOffsetPosition = MPoint(0,0,0);
         }
 
-        // ビューポートサイズからフォントサイズを変更
-        data->fTextFontSize = data->fTextFontSize;
-        data->fMarginPosition = MPoint(data->fTextFontSize*0.1, (height - data->fMaskOffsetPosition.y * 2) * 0.08 * 0.7, 0);
+        // ビューポートサイズからフォントサイズでレイアウト調整
+        data->fMarginPosition = MPoint(mTextFontSize*0.1, (height - data->fMaskOffsetPosition.y * 2) * 0.08 * 0.7, 0);
         data->fOffsetPosition = MPoint(width * 0.01, (height - data->fMaskOffsetPosition.y * 2) * 0.005 * 0.7, 0);
 
-        data->fStartFramePosition   = CameraHudUtility::computeViewportLeftBottom(data->fStartFrameNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
-        data->fEndFramePosition     = CameraHudUtility::computeViewportLeftBottom(data->fEndFrameNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
-        data->fFramePosition        = CameraHudUtility::computeViewportLeftBottom(data->fFrameNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
+        data->fStartFramePosition   = CameraHudUtility::computeViewportLeftBottom(data->fStartFrameNum, width, height, mTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
+        data->fEndFramePosition     = CameraHudUtility::computeViewportLeftBottom(data->fEndFrameNum, width, height, mTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
+        data->fFramePosition        = CameraHudUtility::computeViewportLeftBottom(data->fFrameNum, width, height, mTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
         
-        data->fCameraPosition       = CameraHudUtility::computeViewportLeftTop(data->fCameraNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
-        data->fFocalLengthPosition  = CameraHudUtility::computeViewportLeftTop(data->fFocalLengthNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
-        data->fCutLengthPosition    = CameraHudUtility::computeViewportLeftTop(data->fCutLengthNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
-        data->fCameraCachePosition  = CameraHudUtility::computeViewportLeftTop(data->fCameraCacheNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
+        data->fCameraPosition       = CameraHudUtility::computeViewportLeftTop(data->fCameraNum, width, height, mTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
+        data->fFocalLengthPosition  = CameraHudUtility::computeViewportLeftTop(data->fFocalLengthNum, width, height, mTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
+        data->fCutLengthPosition    = CameraHudUtility::computeViewportLeftTop(data->fCutLengthNum, width, height, mTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
+        data->fCameraCachePosition  = CameraHudUtility::computeViewportLeftTop(data->fCameraCacheNum, width, height, mTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
 
-        data->fTimeCodePosition     = CameraHudUtility::computeViewportRightBottom(data->fTimeCodeNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
+        data->fTimeCodePosition     = CameraHudUtility::computeViewportRightBottom(data->fTimeCodeNum, width, height, mTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
         
-        data->fCurrentDatePosition  = CameraHudUtility::computeViewportRightTop(data->fCurrentDateNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
-        data->fUserNamePosition     = CameraHudUtility::computeViewportRightTop(data->fUserNameNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
+        data->fCurrentDatePosition  = CameraHudUtility::computeViewportRightTop(data->fCurrentDateNum, width, height, mTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
+        data->fUserNamePosition     = CameraHudUtility::computeViewportRightTop(data->fUserNameNum, width, height, mTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
 
-        data->fSceneNamePosition    = CameraHudUtility::computeViewportCenterBottom(data->fSceneNameNum, width, height, data->fTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
+        data->fSceneNamePosition    = CameraHudUtility::computeViewportCenterBottom(data->fSceneNameNum, width, height, mTextFontSize, data->fOffsetPosition, data->fMarginPosition, data->fMaskOffsetPosition);
     };
     return data;
 }
@@ -142,15 +141,15 @@ void CameraHudDrawOverride::addUIDrawables(
         return;
     }
 
-    // UI表示処理開始
+    // UI描画開始
     drawManager.beginDrawable();
 
-    // テスト　デプス確認
+    // テキストデプス優先度
     drawManager.setDepthPriority(100);
 
     // テキストのスタイルをセット
     drawManager.setColor(thisdata->fColor);
-    drawManager.setFontSize(thisdata->fTextFontSize);
+    drawManager.setFontSize(mTextFontSize);
     drawManager.setFontIncline(thisdata->fTextIncline);
     drawManager.setFontWeight(thisdata->fTextWeight);
     drawManager.setFontName(thisdata->fFontFaceName);

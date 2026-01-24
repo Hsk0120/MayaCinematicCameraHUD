@@ -20,4 +20,5 @@ public:
 
 private:
     CameraHudDrawOverride(const MObject& ownerCameraHudNode);
+    float mTextFontSize{ 0.f };
 };
