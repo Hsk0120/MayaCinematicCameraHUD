@@ -6,7 +6,7 @@
 #include <maya/MFrameContext.h>
 #include <maya/MDagPath.h>
 
-// CameraHud の描画オーバーライドクラス
+// CameraHud 縺ｮ謠冗判繧ｪ繝ｼ繝舌�ｼ繝ｩ繧､繝峨け繝ｩ繧ｹ
 class CameraHudDrawOverride : public MHWRender::MPxDrawOverride
 {
 public:

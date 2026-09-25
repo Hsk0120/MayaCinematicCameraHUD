@@ -47,46 +47,46 @@ MUserData* CameraHudDrawOverride::prepareForDraw(
     MStatus status;
     MObject CameraHudNode = objPath.node(&status);
     if (status) {
-        // ƒ^ƒCƒ€ƒR[ƒh‚ðƒZƒbƒg
+        // ã‚¿ã‚¤ãƒ ã‚³ãƒ¼ãƒ‰ã‚’ã‚»ãƒƒãƒˆ
         data->fTimeCode = CameraHudUtility::getCurrentTimecode();
 
-        // ƒJƒŒƒ“ƒgƒtƒŒ[ƒ€‚ðƒZƒbƒg
+        // ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ãƒ¬ãƒ¼ãƒ ã‚’ã‚»ãƒƒãƒˆ
         data->fFrame = CameraHudUtility::formatFrameString("Current : ", CameraHudUtility::getCurrentFrame());
 
-        // ƒXƒ^[ƒgƒtƒŒ[ƒ€‚ðƒZƒbƒg
+        // ã‚¹ã‚¿ãƒ¼ãƒˆãƒ•ãƒ¬ãƒ¼ãƒ ã‚’ã‚»ãƒƒãƒˆ
         data->fStartFrame = CameraHudUtility::formatFrameString("Start : ", CameraHudUtility::getStartFrame());
 
-        // ƒGƒ“ƒhƒtƒŒ[ƒ€‚ðƒZƒbƒg
+        // ã‚¨ãƒ³ãƒ‰ãƒ•ãƒ¬ãƒ¼ãƒ ã‚’ã‚»ãƒƒãƒˆ
         data->fEndFrame = CameraHudUtility::formatFrameString("End : ", CameraHudUtility::getEndFrame());
 
-        // ƒJƒƒ‰ƒl[ƒ€‚ðŽæ“¾‚µ‚ÄƒZƒbƒg
+        // ã‚«ãƒ¡ãƒ©ãƒãƒ¼ãƒ ã‚’å–å¾—ã—ã¦ã‚»ãƒƒãƒˆ
         MFnDagNode camDag(frameContext.getCurrentCameraPath(), &status);
         data->fCamera = CameraHudUtility::getCameraNameFromString(std::string(camDag.name().asChar()));
 
-        // ƒJƒƒ‰‚ÌÅ“_‹——£‚ðŽæ“¾‚µ‚ÄƒZƒbƒg
+        // ã‚«ãƒ¡ãƒ©ã®ç„¦ç‚¹è·é›¢ã‚’å–å¾—ã—ã¦ã‚»ãƒƒãƒˆ
         double focalLen = MFnCamera(camDag.object()).focalLength();
         data->fFocalLength = CameraHudUtility::formatFocalLength(focalLen);
 
-        // ƒJƒƒ‰‚ÌƒLƒƒƒbƒVƒ…ó‹µ‚ðŽæ“¾‚µ‚ÄƒZƒbƒg
+        // ã‚«ãƒ¡ãƒ©ã®ã‚­ãƒ£ãƒƒã‚·ãƒ¥çŠ¶æ³ã‚’å–å¾—ã—ã¦ã‚»ãƒƒãƒˆ
         bool camera_cache_bool = camDag.findPlug(MString("camera_cache")).asBool();
         data->fCameraCache = CameraHudUtility::cameraCacheToString(camera_cache_bool);
 
-        // ƒJƒbƒgƒiƒ“ƒo[‚ðŽæ“¾‚µ‚ÄƒZƒbƒg
+        // ã‚«ãƒƒãƒˆãƒŠãƒ³ãƒãƒ¼ã‚’å–å¾—ã—ã¦ã‚»ãƒƒãƒˆ
         data->fCut = CameraHudUtility::getCutNumber(frameContext.getCurrentCameraPath());
 
-        // ƒeƒLƒXƒgƒTƒCƒYŽæ“¾
+        // ãƒ†ã‚­ã‚¹ãƒˆã‚µã‚¤ã‚ºå–å¾—
         MPlug plugTextFontSize(CameraHudNode, CameraHudNode::aTextFontSize);
         mTextFontSize = plugTextFontSize.asFloat();
 
-        // ƒeƒLƒXƒgƒ{ƒbƒNƒX‚Ì“§–¾“xŽæ“¾
+        // ãƒ†ã‚­ã‚¹ãƒˆãƒœãƒƒã‚¯ã‚¹ã®é€æ˜Žåº¦å–å¾—
         MPlug plugTextBoxTransparency(CameraHudNode, CameraHudNode::aTextBoxTransparency);
         data->fTextBoxColor.a = 1.0f - plugTextBoxTransparency.asFloat();
 
-        // ƒrƒ…[ƒ|[ƒgƒTƒCƒYŽæ“¾
+        // ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã‚µã‚¤ã‚ºå–å¾—
         int a, b, width, height;
         frameContext.getViewportDimensions(a, b, width, height);
 
-        // ƒJƒƒ‰‚ÌƒI[ƒo[ƒXƒLƒƒƒ“‚ðŽæ“¾‚µAƒQ[ƒgƒ}ƒXƒNƒIƒtset‚ÌŒvŽZ
+        // ã‚«ãƒ¡ãƒ©ã®ã‚ªãƒ¼ãƒãƒ¼ã‚¹ã‚­ãƒ£ãƒ³ã‚’å–å¾—ã—ã€ã‚²ãƒ¼ãƒˆãƒžã‚¹ã‚¯ã‚ªãƒ•setã®è¨ˆç®—
         double overscan = MFnCamera(camDag.object()).overscan();
         if (overscan != 1) {
             MString filmFit = CameraHudUtility::filmFitToString(MFnCamera(camDag.object()).filmFit());
@@ -102,7 +102,7 @@ MUserData* CameraHudDrawOverride::prepareForDraw(
             data->fMaskOffsetPosition = MPoint(0,0,0);
         }
 
-        // ƒrƒ…[ƒ|[ƒgƒTƒCƒY‚©‚çƒtƒHƒ“ƒgƒTƒCƒY‚ÅƒŒƒCƒAƒEƒg’²®
+        // ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã‚µã‚¤ã‚ºã‹ã‚‰ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã§ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆèª¿æ•´
         data->fMarginPosition = MPoint(mTextFontSize*0.1, (height - data->fMaskOffsetPosition.y * 2) * 0.08 * 0.7, 0);
         data->fOffsetPosition = MPoint(width * 0.01, (height - data->fMaskOffsetPosition.y * 2) * 0.005 * 0.7, 0);
 
@@ -141,51 +141,51 @@ void CameraHudDrawOverride::addUIDrawables(
         return;
     }
 
-    // UI•`‰æŠJŽn
+    // UIæç”»é–‹å§‹
     drawManager.beginDrawable();
 
-    // ƒeƒLƒXƒgƒfƒvƒX—Dæ“x
+    // ãƒ†ã‚­ã‚¹ãƒˆãƒ‡ãƒ—ã‚¹å„ªå…ˆåº¦
     drawManager.setDepthPriority(100);
 
-    // ƒeƒLƒXƒg‚ÌƒXƒ^ƒCƒ‹‚ðƒZƒbƒg
+    // ãƒ†ã‚­ã‚¹ãƒˆã®ã‚¹ã‚¿ã‚¤ãƒ«ã‚’ã‚»ãƒƒãƒˆ
     drawManager.setColor(thisdata->fColor);
-    drawManager.setFontSize(mTextFontSize);
+    drawManager.setFontSize(static_cast<unsigned int>(mTextFontSize));
     drawManager.setFontIncline(thisdata->fTextIncline);
     drawManager.setFontWeight(thisdata->fTextWeight);
     drawManager.setFontName(thisdata->fFontFaceName);
     int boxSize[] = { thisdata->fTextBoxWidth, thisdata->fTextBoxHeight };
 
-    // ƒJƒƒ‰–¼•\Ž¦
+    // ã‚«ãƒ¡ãƒ©åè¡¨ç¤º
     drawManager.text2d(thisdata->fCameraPosition, thisdata->fCamera, thisdata->fCameraTextAlignment,
         boxSize[0] + boxSize[1] == 0 ? NULL : boxSize, &thisdata->fTextBoxColor, false);
-    // Å“_‹——£•\Ž¦
+    // ç„¦ç‚¹è·é›¢è¡¨ç¤º
     drawManager.text2d(thisdata->fFocalLengthPosition, thisdata->fFocalLength, thisdata->fFocalLengthTextAlignment,
         boxSize[0] + boxSize[1] == 0 ? NULL : boxSize, &thisdata->fTextBoxColor, false);
-    // ƒJƒbƒgƒiƒ“ƒo[‚ð•\Ž¦
+    // ã‚«ãƒƒãƒˆãƒŠãƒ³ãƒãƒ¼ã‚’è¡¨ç¤º
     drawManager.text2d(thisdata->fCutLengthPosition, thisdata->fCut, thisdata->fCutLengthTextAlignment,
         boxSize[0] + boxSize[1] == 0 ? NULL : boxSize, &thisdata->fTextBoxColor, false);
-    // ƒJƒƒ‰ƒLƒƒƒbƒVƒ…•\Ž¦
+    // ã‚«ãƒ¡ãƒ©ã‚­ãƒ£ãƒƒã‚·ãƒ¥è¡¨ç¤º
     drawManager.text2d(thisdata->fCameraCachePosition, thisdata->fCameraCache, thisdata->fCameraCacheTextAlignment,
         boxSize[0] + boxSize[1] == 0 ? NULL : boxSize, &thisdata->fTextBoxColor, false);
-    // ƒ^ƒCƒ€ƒR[ƒh•\Ž¦
+    // ã‚¿ã‚¤ãƒ ã‚³ãƒ¼ãƒ‰è¡¨ç¤º
     drawManager.text2d(thisdata->fTimeCodePosition, thisdata->fTimeCode, thisdata->fTimeCodeTextAlignment,
         boxSize[0] + boxSize[1] == 0 ? NULL : boxSize, &thisdata->fTextBoxColor, false);
-    // ƒJƒŒƒ“ƒgƒtƒŒ[ƒ€•\Ž¦
+    // ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ãƒ¬ãƒ¼ãƒ è¡¨ç¤º
     drawManager.text2d(thisdata->fFramePosition, thisdata->fFrame, thisdata->fFrameTextAlignment,
         boxSize[0] + boxSize[1] == 0 ? NULL : boxSize, &thisdata->fTextBoxColor, false);
-    //  ƒXƒ^[ƒgƒtƒŒ[ƒ€•\Ž¦
+    //  ã‚¹ã‚¿ãƒ¼ãƒˆãƒ•ãƒ¬ãƒ¼ãƒ è¡¨ç¤º
     drawManager.text2d(thisdata->fStartFramePosition, thisdata->fStartFrame, thisdata->fStartFrameTextAlignment,
         boxSize[0] + boxSize[1] == 0 ? NULL : boxSize, &thisdata->fTextBoxColor, false);
-    // ƒGƒ“ƒhƒtƒŒ[ƒ€•\Ž¦
+    // ã‚¨ãƒ³ãƒ‰ãƒ•ãƒ¬ãƒ¼ãƒ è¡¨ç¤º
     drawManager.text2d(thisdata->fEndFramePosition, thisdata->fEndFrame, thisdata->fEndFrameTextAlignment,
         boxSize[0] + boxSize[1] == 0 ? NULL : boxSize, &thisdata->fTextBoxColor, false);
-    // ƒ†[ƒU[–¼•\Ž¦
+    // ãƒ¦ãƒ¼ã‚¶ãƒ¼åè¡¨ç¤º
     drawManager.text2d(thisdata->fUserNamePosition, thisdata->fUserName, thisdata->fUserNameTextAlignment,
         boxSize[0] + boxSize[1] == 0 ? NULL : boxSize, &thisdata->fTextBoxColor, false);
-    // ƒV[ƒ“–¼•\Ž¦
+    // ã‚·ãƒ¼ãƒ³åè¡¨ç¤º
     drawManager.text2d(thisdata->fSceneNamePosition, thisdata->fSceneName, thisdata->fSceneNameTextAlignment,
         boxSize[0] + boxSize[1] == 0 ? NULL : boxSize, &thisdata->fTextBoxColor, false);
-    // ¡“ú‚Ì“ú•t‚ð•\Ž¦
+    // ä»Šæ—¥ã®æ—¥ä»˜ã‚’è¡¨ç¤º
     drawManager.text2d(thisdata->fCurrentDatePosition, thisdata->fCurrentDate, thisdata->fCurrentDateTextAlignment,
         boxSize[0] + boxSize[1] == 0 ? NULL : boxSize, &thisdata->fTextBoxColor, false);
 

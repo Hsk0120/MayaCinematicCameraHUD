@@ -6,12 +6,12 @@
 #include <maya/MObject.h>
 #include <maya/MString.h>
 
-// CameraHud ƒm[ƒh (ƒwƒbƒ_)
+// CameraHud ãƒãƒ¼ãƒ‰ (ãƒ˜ãƒƒãƒ€)
 class CameraHudNode : public MPxLocatorNode
 {
 public:
-    static void* creator();           // ƒm[ƒh¶¬ŠÖ”
-    static MStatus initialize();      // ƒAƒgƒŠƒrƒ…[ƒg“o˜^
+    static void* creator();           // ãƒãƒ¼ãƒ‰ç”Ÿæˆé–¢æ•°
+    static MStatus initialize();      // ã‚¢ãƒˆãƒªãƒ“ãƒ¥ãƒ¼ãƒˆç™»éŒ²
 
     static MObject aText;
     static MObject aTextBoxTransparency;

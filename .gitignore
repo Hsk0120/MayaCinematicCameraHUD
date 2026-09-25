@@ -39,3 +39,34 @@
 
 # debug information files
 *.dwo
+
+# ビルドフォルダ(tools/windows/*.bat が作る build_<Mayaバージョン>/ など)
+build/
+build_*/
+pdb/
+
+# Visual Studio / CMake 生成物
+.vs/
+.vscode/ipch/
+*.user
+*.suo
+*.sln.docstates
+x64/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+cmake-build-*/
+compile_commands.json
+.cache/
+
+# MSVC のビルド中間物・デバッグ情報
+*.idb
+*.tlog
+*.exp
+*.ilk
+*.pdb
+*.obj
+*.iobj
+*.ipdb
+
+# プラグイン本体(release/plug-ins/**/*.mll)はリリース物として追跡する。

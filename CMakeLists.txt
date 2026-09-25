@@ -1,4 +1,11 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.15)
+
+project(MayaCinematicCameraHUD)
+
+# ソースはUTF-8。Mayaのバージョンによって既定の文字コードが違うため明示する
+if(MSVC)
+    add_compile_options(/utf-8)
+endif()
 
 # group CMake predefined targets
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -7,13 +14,13 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMakeTargets")
 # include the project setting file
 include("$ENV{DEVKIT_LOCATION}/cmake/pluginEntry.cmake")
 
-# Maya 2026以降: find_qtマクロを使用
-if(MAYA_VERSION VERSION_GREATER_EQUAL 2026)
+# Maya 2025以降(Qt6): find_qtマクロを使用
+if(MAYA_VERSION VERSION_GREATER_EQUAL 2025)
     find_qt(Core Widgets Gui)
 endif()
 
-# Maya 2022-2024: 手動でQt5を設定
-if(MAYA_VERSION VERSION_LESS 2026)
+# Maya 2022-2024(Qt5): 手動でQt5を設定
+if(MAYA_VERSION VERSION_LESS 2025)
     # MayaにはRelease版のQtしかないため、Debug構成でもRelease版を使用
     # この設定はfind_packageより前に行う必要がある
     set(CMAKE_MAP_IMPORTED_CONFIG_DEBUG "Release;RelWithDebInfo;MinSizeRel;")
@@ -77,14 +84,14 @@ build_plugin()
 
 # set output directory for the Maya plugin (.mll)
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY_DEBUG          "../release/plug-ins/windows/${MAYA_VERSION}"
-    RUNTIME_OUTPUT_DIRECTORY_RELEASE        "../release/plug-ins/windows/${MAYA_VERSION}"
-    RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "../release/plug-ins/windows/${MAYA_VERSION}"
-    RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL     "../release/plug-ins/windows/${MAYA_VERSION}"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG          "${CMAKE_CURRENT_SOURCE_DIR}/release/plug-ins/windows/${MAYA_VERSION}"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE        "${CMAKE_CURRENT_SOURCE_DIR}/release/plug-ins/windows/${MAYA_VERSION}"
+    RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_SOURCE_DIR}/release/plug-ins/windows/${MAYA_VERSION}"
+    RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL     "${CMAKE_CURRENT_SOURCE_DIR}/release/plug-ins/windows/${MAYA_VERSION}"
 )
 
 # output .pdb to build/pdb
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    PDB_OUTPUT_DIRECTORY_DEBUG              "/pdb"
-    PDB_OUTPUT_DIRECTORY_RELEASE            "/pdb"
+    PDB_OUTPUT_DIRECTORY_DEBUG              "${CMAKE_CURRENT_BINARY_DIR}/pdb"
+    PDB_OUTPUT_DIRECTORY_RELEASE            "${CMAKE_CURRENT_BINARY_DIR}/pdb"
 )
