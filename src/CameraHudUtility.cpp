@@ -1,3 +1,7 @@
+/**
+ * @file CameraHudUtility.cpp
+ * @brief CameraHudUtility の実装。各関数の仕様は CameraHudUtility.h を参照。
+ */
 #include <maya/MGlobal.h>
 #include <maya/MString.h>
 #include <maya/MTime.h>
@@ -238,96 +242,6 @@ MString formatFocalLength(
     return MString(str);
 }
 
-MPoint computeViewportLeftBottom(
-    int num,
-    int width,
-    int height,
-    double fontSize,
-    MPoint offset,
-    MPoint margin,
-    MPoint maskOffset)
-{
-    return MPoint(
-        offset.x + margin.x + maskOffset.x,
-        offset.y + maskOffset.y + (margin.y + fontSize) * num,
-        0);
-}
-
-MPoint computeViewportLeftTop(
-    int num,
-    int width,
-    int height,
-    double fontSize,
-    MPoint offset,
-    MPoint margin,
-    MPoint maskOffset)
-{
-    return MPoint(
-        offset.x + margin.x + maskOffset.x,
-        height - maskOffset.y - offset.y - (margin.y + fontSize) * (num + 1),
-        0);
-}
-
-MPoint computeViewportRightBottom(
-    int num,
-    int width,
-    int height,
-    double fontSize,
-    MPoint offset,
-    MPoint margin,
-    MPoint maskOffset)
-{
-    return MPoint(
-        width - offset.x - margin.x - maskOffset.x,
-        offset.y + maskOffset.y + (margin.y + fontSize) * num,
-        0);
-}
-
-MPoint computeViewportRightTop(
-    int num,
-    int width,
-    int height,
-    double fontSize,
-    MPoint offset,
-    MPoint margin,
-    MPoint maskOffset)
-{
-    return MPoint(
-        width - offset.x - margin.x - maskOffset.x,
-        height - maskOffset.y - offset.y - (margin.y + fontSize) * (num + 1),
-        0);
-}
-
-MPoint computeViewportCenterBottom(
-    int num,
-    int width,
-    int height,
-    double fontSize,
-    MPoint offset,
-    MPoint margin,
-    MPoint maskOffset)
-{
-    return MPoint(
-        width / 2,
-        offset.y + maskOffset.y + (margin.y + fontSize) * num,
-        0);
-}
-
-MPoint computeViewportCenterTop(
-    int num,
-    int width,
-    int height,
-    double fontSize,
-    MPoint offset,
-    MPoint margin,
-    MPoint maskOffset)
-{
-    return MPoint(
-        width / 2,
-        height - maskOffset.y - offset.y - (margin.y + fontSize) * (num + 1),
-        0);
-}
-
 MPoint computeCameraResolutionFill(
     double overscan,
     int viewport_width,
@@ -340,38 +254,21 @@ MPoint computeCameraResolutionFill(
 
     // 複雑な条件は既存ロジックを維持
     if (viewport_aspect_ratio > device_aspect_ratio * overscan) {
-        MGlobal::displayInfo(MString("if                                    :"));
         mask_height = 0;
         mask_width = (viewport_width - viewport_width / overscan) / 2;
     }
     else if (device_aspect_ratio * overscan > viewport_aspect_ratio && viewport_aspect_ratio > device_aspect_ratio / viewport_aspect_ratio / overscan * 2) {
-        MGlobal::displayInfo(MString("else if 01                                     :"));
         mask_height = (viewport_height - viewport_height / overscan) / 2 * (device_aspect_ratio * overscan - viewport_aspect_ratio) * 2;
         mask_width = (viewport_width - viewport_width / overscan) / 2;
     }
     else if ((device_aspect_ratio - (viewport_aspect_ratio / overscan * 2)) < 0) {
-        MGlobal::displayInfo(MString("else if 02                                     :"));
         mask_height = (viewport_height - viewport_height / overscan) / 2 * device_aspect_ratio * device_aspect_ratio / (viewport_aspect_ratio / overscan * 2);
         mask_width = (viewport_width - viewport_width / overscan) / 2 * std::pow(((viewport_aspect_ratio / overscan * 2) - device_aspect_ratio) * overscan, 0.5);
     }
     else {
-        MGlobal::displayInfo(MString("else                                     :"));
         mask_height = (viewport_height - viewport_height / overscan) / 2 * device_aspect_ratio;
         mask_width = 0;
     }
-
-    MGlobal::displayInfo(MString("viewport_aspect_ratio                                         :") + viewport_aspect_ratio);
-    MGlobal::displayInfo(MString("device_aspect_ratio                                           :") + device_aspect_ratio);
-    MGlobal::displayInfo(MString("viewport_aspect_ratio / overscan                              :") + (viewport_aspect_ratio / overscan));
-    MGlobal::displayInfo(MString("viewport_aspect_ratio / overscan * 2                          :") + (viewport_aspect_ratio / overscan * 2));
-    MGlobal::displayInfo(MString("device_aspect_ratio / viewport_aspect_ratio / overscan * 2    :") + (device_aspect_ratio / viewport_aspect_ratio / overscan * 2));
-    MGlobal::displayInfo(MString("device_aspect_ratio / overscan                                :") + (device_aspect_ratio / overscan));
-    MGlobal::displayInfo(MString("viewport_aspect_ratio * overscan                              :") + (viewport_aspect_ratio * overscan));
-    MGlobal::displayInfo(MString("device_aspect_ratio * overscan                                :") + (device_aspect_ratio * overscan));
-    MGlobal::displayInfo(MString("(device_aspect_ratio * overscan - viewport_aspect_ratio) * 2  :") + ((device_aspect_ratio * overscan - viewport_aspect_ratio) * 2));
-    MGlobal::displayInfo(MString(" ( (viewport_aspect_ratio / overscan * 2) - device_aspect_ratio) * overscan:") + (((viewport_aspect_ratio / overscan * 2) - device_aspect_ratio) * overscan));
-    MGlobal::displayInfo(MString("mask_height                                                   :") + mask_height);
-    MGlobal::displayInfo(MString("mask_width                                                    :") + mask_width);
 
     return MPoint(mask_width, mask_height, 0.0);
 }
@@ -398,30 +295,6 @@ MPoint computeCameraResolutionHorizontal(
     }
 
     return MPoint(mask_width, mask_height, 0.0);
-}
-
-MString filmFitToString(MFnCamera::FilmFit filmFit)
-{
-    MString filmFitString;
-    switch (filmFit)
-    {
-    case MFnCamera::kFillFilmFit:
-        filmFitString = "fill";
-        break;
-    case MFnCamera::kHorizontalFilmFit:
-        filmFitString = "horizontal";
-        break;
-    case MFnCamera::kVerticalFilmFit:
-        filmFitString = "vertical";
-        break;
-    case MFnCamera::kOverscanFilmFit:
-        filmFitString = "overscan";
-        break;
-    default:
-        MGlobal::displayError("Unknown film fit.");
-        return MString();
-    }
-    return filmFitString;
 }
 
 MString cameraCacheToString(

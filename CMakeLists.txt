@@ -7,11 +7,11 @@ if(MSVC)
     add_compile_options(/utf-8)
 endif()
 
-# group CMake predefined targets
+# Visual Studioのソリューション上で、CMakeが自動生成するターゲットをまとめて表示する
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMakeTargets")
 
-# include the project setting file
+# devkitの共通設定(Maya APIのインクルードパス・ライブラリ、build_plugin関数など)を読み込む
 include("$ENV{DEVKIT_LOCATION}/cmake/pluginEntry.cmake")
 
 # Maya 2025以降(Qt6): find_qtマクロを使用
@@ -54,23 +54,23 @@ if(MAYA_VERSION VERSION_LESS 2025)
     set(INCLUDE_DIRS ${INCLUDE_DIRS} "$ENV{DEVKIT_LOCATION}/include")
 endif()
 
-# specify project name
+# build_pluginが参照する変数。PROJECT_NAMEは出力される.mllのファイル名になる
 set(PROJECT_NAME MayaCinematicCameraHUD)
 
-# set SOURCE_FILES
+# プラグインを構成するソースとヘッダー
 set(SOURCE_FILES
     src/CameraHudMain.cpp
     src/CameraHudUtility.cpp
-    src/CameraHudManager.cpp
+    src/CameraHudDrawData.cpp
     src/CameraHudNode.cpp
     src/CameraHudDrawOverride.cpp
-    src/CameraHudManager.h
+    src/CameraHudDrawData.h
     src/CameraHudUtility.h
     src/CameraHudNode.h
     src/CameraHudDrawOverride.h
 )
 
-# set linking libraries
+# リンクするMaya APIライブラリ
 set(LIBRARIES
      OpenMaya
      OpenMayaAnim
@@ -79,10 +79,10 @@ set(LIBRARIES
      Foundation
 )
 
-# Build plugin
+# 上の変数からプラグインのターゲットを作成する
 build_plugin()
 
-# set output directory for the Maya plugin (.mll)
+# 生成した.mllは、Mayaのバージョンごとにrelease/plug-ins/windows/<年>/へ出力する
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG          "${CMAKE_CURRENT_SOURCE_DIR}/release/plug-ins/windows/${MAYA_VERSION}"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE        "${CMAKE_CURRENT_SOURCE_DIR}/release/plug-ins/windows/${MAYA_VERSION}"
@@ -90,7 +90,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL     "${CMAKE_CURRENT_SOURCE_DIR}/release/plug-ins/windows/${MAYA_VERSION}"
 )
 
-# output .pdb to build/pdb
+# デバッグ情報(.pdb)はリリースフォルダに置かず、ビルドフォルダ内のpdb/へ出力する
 set_target_properties(${PROJECT_NAME} PROPERTIES
     PDB_OUTPUT_DIRECTORY_DEBUG              "${CMAKE_CURRENT_BINARY_DIR}/pdb"
     PDB_OUTPUT_DIRECTORY_RELEASE            "${CMAKE_CURRENT_BINARY_DIR}/pdb"
